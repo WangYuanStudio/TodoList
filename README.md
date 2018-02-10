@@ -1,12 +1,19 @@
 # todolist
 
 > A Vue.js project
+
 >分为在线模式和离线模式
+
 >因为没有设计师，不要吐槽样式
+
 >临时用的api混在大杂烩里面所以不放出来了
+
 >api的跨域地址设定地址为http://localhost:8088/
+
 >默认的openid为"testopenid"
+
 >更改openid   http://localhost:8088/?openid="%$#!?@#$&^%#&*"
+
 >暂时就这么多吧
 
 ## Build Setup
