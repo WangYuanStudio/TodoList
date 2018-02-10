@@ -12,7 +12,7 @@
 
 >默认的openid为"testopenid"
 
->更改openid   http://localhost:8088/?openid="%$#!?@#$&^%#&*"
+>更改openid   http://localhost:8088/?openid=22336699
 
 >暂时就这么多吧
 
