@@ -34,4 +34,10 @@ npm run build --report
 ## 已知BUG
 >在微信客户端浏览器中，改变事件状态后马上删除事件会导致浏览器崩溃
 
+
+
+## enhancement
+>事件排序
+
+
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).

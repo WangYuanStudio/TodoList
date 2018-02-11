@@ -45,7 +45,7 @@ export default {
 				// 	status:'no',
 				// 	edit:false,
 				// 	edit_value:"",
-				// 	keyname:"事件唯一标示计算方法：md5(时间戳+openid)"
+				// 	keyname:"事件唯一标示计算方法：md5(毫秒级时间戳+openid)"
 				// }
 			],
 			view:'all', // 列表筛选条件
@@ -59,12 +59,12 @@ export default {
 	},
 	computed:{
 		filterlist:function(){// 条件筛选
-			if(this.view=="no"){
+			if(this.view === "no"){
 				return this.todos.filter(function(todo){
 					return todo.status === "no"
 				})
 			}
-			if(this.view=="ok"){
+			if(this.view === "ok"){
 				return this.todos.filter(function(todo){
 					return todo.status === "ok"
 				})
@@ -72,8 +72,8 @@ export default {
 			return this.todos
 		},
 		sum:function(){    //统计未完成事件
-			let sum=0;
-			for(let i = 0;i<this.todos.length;i++){
+			let sum = 0;
+			for(let i = 0;i < this.todos.length;i++){
 				if(this.todos[i].status === "no"){
 					sum++;
 				}
@@ -175,9 +175,9 @@ export default {
 				}
 				this.todos.push(data);
 				this.DB_push_event(DB_data);
-				DB_data.do='add';
-				DB_data.openid=this.openid;
-				this.$refs.add_new.value="";
+				DB_data.do = 'add';
+				DB_data.openid = this.openid;
+				this.$refs.add_new.value = "";
 				if(this.setting.online){
 					this.axios.post(this.api,DB_data);
 				}
@@ -186,10 +186,10 @@ export default {
 		complete_all:function(){// 输入框左边的箭头，当有未完成时设为全部完成。否则全部设为未完成
 			let newstatus = '';
 			if(this.sum){
-				newstatus='ok'
+				newstatus = 'ok'
 			}
 			else{
-				newstatus='no'
+				newstatus = 'no'
 			}
 			if(this.setting.online){
 				this.axios.post(this.api,{
@@ -208,11 +208,12 @@ export default {
 				if(confirm("切换为在线模式后，所有事件将同步到服务器上")){
 					this.setting.online = true;
 					localStorage.online = true;
-					this.axios.post(this.api,{
-						do:'updateall',
-						openid:this.openid,
-						todos:this.todos
-					})
+					// this.axios.post(this.api,{
+					// 	do:'updateall',
+					// 	openid:this.openid,
+					// 	todos:this.todos
+					// })
+					this.synchronous();
 				}
 			}
 			else{
@@ -226,7 +227,65 @@ export default {
 				}
 			}
 		},
+		synchronous:async function(){
+			if(this.setting.online){// 如果为在线模式，则开始同步
+				let data = (await this.axios.post(this.api,{
+					do:'getall',
+					openid:this.openid
+				})).data.data;
+				//线上线下同步
+				let local = this.Getkeyname(this.todos);// Getkeyname作用是将含有keyname的对象数组转换后，返回一个只有keyname的数组
+				let online = this.Getkeyname(data);
+				let diff = this.Getkeyname_diff(local,online);// Getkeyname_diff用与获取两个数组差异的部分
+
+				let local_diff = this.Getkeyname_diff(this.Getkeyname_inter(local,diff),diff);// Getkeyname_inter用于获取两个数组相交的部分
+				//local_diff为本地缺少的keyname
+				for(let i = 0;i < local_diff.length;i++){// 遍历local_diff，从服务器返回的data获取本地缺少的数据分别提交到本地数据库和vue实例
+					for(let j = 0;j < data.length;j++){
+						if(local_diff[i] === data[j].keyname){
+							delete data[j].id;
+							delete data[j].openid;
+							this.DB_push_event(data[j]);
+							data[j].edit = false;
+							data[j].edit_value = "";
+							this.todos.push(data[j])
+						}
+					}
+				}
+
+				let online_diff = this.Getkeyname_diff(this.Getkeyname_inter(online,diff),diff);
+				//online_diff为服务器缺少的keyname
+				let willpush = [];
+				// 将要被发送的数组
+				for(let i = 0;i < online_diff.length;i++){// 遍历online_diff，从vue实例中获取服务器缺少的数据并提交
+					for(let j = 0;j < this.todos.length;j++){
+						if(online_diff[i] === this.todos[j].keyname){
+							willpush.push({
+								openid:this.openid,
+								do:'add',
+								keyname:this.todos[j].keyname,
+								text:this.todos[j].text,
+								status:this.todos[j].status
+							})
+						}
+					}
+				}
+				await this.axios.post(this.api,{
+					do:'updateall',
+					openid:this.openid,
+					todos:willpush
+				})
+			}
+		},
 		DB_push_event:function(data){// 向本地数据库提交事件
+			// var vue_todo_obj = this;
+			// return new Promise(function(resolve, reject){
+			// 	vue_todo_obj.todoDB.result.transaction('todo', "readwrite").objectStore('todo').add(data);
+			// 	vue_todo_obj.todoDB.result.transaction('todo', "readwrite").objectStore('todo').onsuccess=function(event){
+			// 		resolve(event)
+			// 	}
+			// })
+
 			this.todoDB.result.transaction('todo', "readwrite").objectStore('todo').add(data);
 		},
 		DB_edit_event(keyname, data) {// 编辑本地数据库的事件，keyname是事件唯一标示(索引)，data是一个对象{要修改的值的名字:要修改的值}
@@ -235,7 +294,8 @@ export default {
 			// 打开已经存储的数据对象
 			let objectStore = transaction.objectStore('todo');
 			// 获取存储的对应键的存储对象
-			let objectStoreRequest = objectStore.get(keyname);
+			let keypath = objectStore.index('keyname');
+			let objectStoreRequest = keypath.get(keyname);
 			// 获取成功后替换当前数据
 			objectStoreRequest.onsuccess = function(event) {
 			// 当前数据
@@ -258,12 +318,12 @@ export default {
 					let db = event.target.result;
 					if(!db.objectStoreNames.length){
 						let objectStore = db.createObjectStore("todo", { 
-					        keyPath: 'keyname',
+					        keyPath: 'id',
 					        autoIncrement: true
 					    });
-					    // objectStore.createIndex('keyname', 'keyname', {
-					    //     unique: true    
-					    // });
+					    objectStore.createIndex('keyname', 'keyname', {
+					        unique: true    
+					    });
 					    // objectStore.createIndex('text', '');
 					    // objectStore.createIndex('status', '');
 					    // objectStore.createIndex('keyname', '');
@@ -272,7 +332,7 @@ export default {
 				var vue_todo_obj = this;
 				this.todoDB.onsuccess =function (event) {           //读取indexedDB的数据到实例里面
 					let objectStore = event.target.result.transaction('todo', "readwrite").objectStore('todo');
-					objectStore.openCursor(null, IDBCursor.prev).onsuccess = async function(event) {
+					objectStore.openCursor(null, IDBCursor.prev).onsuccess = function(event) {
 						let cursor = event.target.result;
 						if (cursor) {
 							let data = cursor.value;
@@ -281,46 +341,8 @@ export default {
 							vue_todo_obj.todos.push(data);
 							cursor.continue();
 						}
-						else{// 本地数据库读取完成后
-							if(vue_todo_obj.setting.online){// 如果为在线模式，则开始同步
-								let data = (await vue_todo_obj.axios.post(vue_todo_obj.api,{
-									do:'getall',
-									openid:vue_todo_obj.openid
-								})).data.data;
-								//线上线下同步
-								let local = vue_todo_obj.Getkeyname(vue_todo_obj.todos);// Getkeyname作用是将含有keyname的对象数组转换后，返回一个只有keyname的数组
-								let online = vue_todo_obj.Getkeyname(data);
-								let diff = vue_todo_obj.Getkeyname_diff(local,online);// Getkeyname_diff用与获取两个数组差异的部分
-								let local_diff = vue_todo_obj.Getkeyname_diff(vue_todo_obj.Getkeyname_inter(local,diff),diff);// Getkeyname_inter用于获取两个数组相交的部分
-								//local_diff为本地缺少的keyname
-								for(let i = 0;i<local_diff.length;i++){// 遍历local_diff，从服务器返回的data获取本地缺少的数据分别提交到本地数据库和vue实例
-									for(let j = 0;j<data.length;j++){
-										if(local_diff[i] === data[j].keyname){
-											delete data[j].id;
-											delete data[j].openid;
-											vue_todo_obj.DB_push_event(data[j])
-											data[j].edit=false;
-											data[j].edit_value="";
-											vue_todo_obj.todos.push(data[j])
-										}
-									}
-								}
-								let online_diff = vue_todo_obj.Getkeyname_diff(vue_todo_obj.Getkeyname_inter(online,diff),diff);
-								//online_diff为服务器缺少的keyname
-								for(let i = 0;i<online_diff.length;i++){// 遍历online_diff，从vue实例中获取服务器缺少的数据并提交
-									for(let j = 0;j<vue_todo_obj.todos.length;j++){
-										if(online_diff[i] === vue_todo_obj.todos[j].keyname){
-											await vue_todo_obj.axios.post(vue_todo_obj.api,{
-												openid:vue_todo_obj.openid,
-												do:'add',
-												keyname:vue_todo_obj.todos[j].keyname,
-												text:vue_todo_obj.todos[j].text,
-												status:vue_todo_obj.todos[j].status
-											});
-										}
-									}
-								}
-							}
+						else{// 本地数据库读取完成后,执行同步
+							vue_todo_obj.synchronous();
 						}
 					};
 				}
@@ -331,7 +353,7 @@ export default {
 		},
 		Getkeyname:function(arry){// 将含有keyname的对象数组转换后，返回一个只有keyname的数组
 			let a = new Array()
-			for(let i=0;i<arry.length;i++){
+			for(let i = 0;i<arry.length;i++){
 				a[i] = arry[i].keyname;
 			}
 			return a
