@@ -15,7 +15,7 @@
 		<div class="list" id="event_list">
 			<div class="list_son" v-for="(todo,index) in filterlist"  v-bind:todo="todo" v-bind:index="index">
 				<span class="evented" v-on:click="change_event_status(index)"><i class="iconfont icon-gou" v-bind:class="todo.status"></i></span>
-				<div class="node" v-bind:class="todo.status" v-on:click="edit_todo(index)" v-if="!todo.edit">{{todo.text}}</div>
+				<div class="node" v-bind:class="todo.status" v-on:click="todo.edit=true" v-if="!todo.edit">{{todo.text}}</div>
 				<p class="del" v-on:click="del_event(index,1)">×</p>
 				<input type="text" v-if="todo.edit" v-on:keyup.13="push_edit(index)" v-model="todo.text" v-focus="todo.edit">
 				<div class="bg" id="bg" v-if="todo.edit" v-on:click="push_edit(index)"></div>
@@ -48,9 +48,8 @@ export default {
 				// 	keyname:"事件唯一标示计算方法：md5(时间戳+openid)"
 				// }
 			],
-			view:'all',
-			value:'',
-			todoDB:null,
+			view:'all', // 列表筛选条件
+			todoDB:null,// indexedDB对象
 			openid:null,
 			setting:{
 				online:(localStorage.online === 'true')
@@ -59,7 +58,7 @@ export default {
 		}
 	},
 	computed:{
-		filterlist:function(){
+		filterlist:function(){// 条件筛选
 			if(this.view=="no"){
 				return this.todos.filter(function(todo){
 					return todo.status === "no"
@@ -123,17 +122,14 @@ export default {
 				});
 			}
 		},
-		edit_todo:function(index){
-			this.filterlist[index].edit = true;
-		},
-		push_edit:async function(index){
-			this.filterlist[index].edit = false;
-			this.DB_edit_event(this.filterlist[index].keyname,{text:this.filterlist[index].text})
-			if(!this.filterlist[index].text){
+		push_edit:async function(index){// 提交事件编辑
+			this.filterlist[index].edit = false; // 关闭编辑框
+			if(!this.filterlist[index].text){// 如果编辑后内容为空则删除事件
 				this.del_event(index,0)
 			}
 			else{
-				if(this.setting.online){
+				this.DB_edit_event(this.filterlist[index].keyname,{text:this.filterlist[index].text})// 将编辑结果提交到本地数据库
+				if(this.setting.online){// 将编辑结果提交到在线数据库
 					await this.axios.post(this.api,{
 						do:'update',
 						keyname:this.filterlist[index].keyname,
@@ -162,7 +158,7 @@ export default {
 				}
 			}
 		},
-		push_event:async function(){
+		push_event:async function(){// 提交新的事件
 			if(this.$refs.add_new.value){    //refs是这个组件中带有ref属性的元素的集合
 				let keyname = this.md5((new Date()).valueOf() + this.openid);
 				let data = {
@@ -187,7 +183,7 @@ export default {
 				}
 			}
 		},
-		complete_all:function(){
+		complete_all:function(){// 输入框左边的箭头，当有未完成时设为全部完成。否则全部设为未完成
 			let newstatus = '';
 			if(this.sum){
 				newstatus='ok'
@@ -207,7 +203,7 @@ export default {
 				this.todos[i].status = newstatus
 			}
 		},
-		setonline:function(){
+		setonline:function(){//  切换在线离线模式
 			if(this.setting.online === false){
 				if(confirm("切换为在线模式后，所有事件将同步到服务器上")){
 					this.setting.online = true;
@@ -230,10 +226,10 @@ export default {
 				}
 			}
 		},
-		DB_push_event:function(data){
+		DB_push_event:function(data){// 向本地数据库提交事件
 			this.todoDB.result.transaction('todo', "readwrite").objectStore('todo').add(data);
 		},
-		DB_edit_event(keyname, data) {
+		DB_edit_event(keyname, data) {// 编辑本地数据库的事件，keyname是事件唯一标示(索引)，data是一个对象{要修改的值的名字:要修改的值}
 			// 新建事务
 			let transaction = this.todoDB.result.transaction('todo', "readwrite");
 			// 打开已经存储的数据对象
@@ -256,7 +252,7 @@ export default {
 		},
 		create_DB:function(openid){
 			let indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
-			if(indexedDB){
+			if(indexedDB){// 创建一个indexedDB对象，数据库命名为openid
 				this.todoDB = indexedDB.open(openid,1);
 				this.todoDB.onupgradeneeded = function (event) {
 					let db = event.target.result;
@@ -285,19 +281,19 @@ export default {
 							vue_todo_obj.todos.push(data);
 							cursor.continue();
 						}
-						else{
-							if(vue_todo_obj.setting.online){
+						else{// 本地数据库读取完成后
+							if(vue_todo_obj.setting.online){// 如果为在线模式，则开始同步
 								let data = (await vue_todo_obj.axios.post(vue_todo_obj.api,{
 									do:'getall',
 									openid:vue_todo_obj.openid
 								})).data.data;
 								//线上线下同步
-								let local = vue_todo_obj.Getkeyname(vue_todo_obj.todos);
+								let local = vue_todo_obj.Getkeyname(vue_todo_obj.todos);// Getkeyname作用是将含有keyname的对象数组转换后，返回一个只有keyname的数组
 								let online = vue_todo_obj.Getkeyname(data);
-								let diff = vue_todo_obj.Getkeyname_diff(local,online);
-								let local_diff = vue_todo_obj.Getkeyname_diff(vue_todo_obj.Getkeyname_inter(local,diff),diff);
+								let diff = vue_todo_obj.Getkeyname_diff(local,online);// Getkeyname_diff用与获取两个数组差异的部分
+								let local_diff = vue_todo_obj.Getkeyname_diff(vue_todo_obj.Getkeyname_inter(local,diff),diff);// Getkeyname_inter用于获取两个数组相交的部分
 								//local_diff为本地缺少的keyname
-								for(let i = 0;i<local_diff.length;i++){
+								for(let i = 0;i<local_diff.length;i++){// 遍历local_diff，从服务器返回的data获取本地缺少的数据分别提交到本地数据库和vue实例
 									for(let j = 0;j<data.length;j++){
 										if(local_diff[i] === data[j].keyname){
 											delete data[j].id;
@@ -311,7 +307,7 @@ export default {
 								}
 								let online_diff = vue_todo_obj.Getkeyname_diff(vue_todo_obj.Getkeyname_inter(online,diff),diff);
 								//online_diff为服务器缺少的keyname
-								for(let i = 0;i<online_diff.length;i++){
+								for(let i = 0;i<online_diff.length;i++){// 遍历online_diff，从vue实例中获取服务器缺少的数据并提交
 									for(let j = 0;j<vue_todo_obj.todos.length;j++){
 										if(online_diff[i] === vue_todo_obj.todos[j].keyname){
 											await vue_todo_obj.axios.post(vue_todo_obj.api,{
@@ -333,14 +329,14 @@ export default {
 				alert("你的老牛不行了呀")
 			}
 		},
-		Getkeyname:function(arry){
+		Getkeyname:function(arry){// 将含有keyname的对象数组转换后，返回一个只有keyname的数组
 			let a = new Array()
 			for(let i=0;i<arry.length;i++){
 				a[i] = arry[i].keyname;
 			}
 			return a
 		},
-		Getkeyname_diff:function(a,b){
+		Getkeyname_diff:function(a,b){// 取两个数组相异部分
 			let difference = a.concat(b).filter(v => !a.includes(v) || !b.includes(v));
 			return difference
 		},
@@ -348,7 +344,7 @@ export default {
 			let intersection = a.filter(v => b.includes(v)) //交集
 			return intersection
 		},
-		GetQueryString:function(name){
+		GetQueryString:function(name){// 获取url上的参数
 			let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)","i");
 			let r = window.location.search.substr(1).match(reg);
 			if (r !== null) return unescape(r[2]); return null;
@@ -357,8 +353,8 @@ export default {
 	watch:{
 		
 	},
-	mounted () {
-		this.openid = this.GetQueryString('openid')||'testopenid';
+	mounted () {// vue实例创建后、页面渲染前执行
+		this.openid = this.GetQueryString('openid')||'testopenid';// 若url上没有openid则让openid="testopenid"
 		this.create_DB(this.openid);  //创建数据库
 	},
 	directives: {
@@ -399,10 +395,10 @@ body{
 .main .input input{
 	height: 50px;
 	line-height: 50px;
-	width: calc(100% - 50px);
+	width: calc(100% - 120px);
 	max-width: 500px;
 	font-size: 30px;
-	padding-left: 50px;
+	padding: 0 70px 0 50px;
 	border: 0;
 	box-shadow: 0px 0px 15px #bbb;
 	outline: 0;
@@ -424,6 +420,7 @@ body{
 }
 .main .input .add_button{
 	right: 0;
+	height: 48px;
 	line-height: 50px;
 	text-align: center;
 	border:1px solid #000;
@@ -514,7 +511,7 @@ body{
 	color: #888;
 }
 .main .list .list_son input{
-	width: calc(100% - 70px);
+	width: calc(100% - 75px);
 	max-width: 480px;
 	position: absolute;
 	height: 50px;

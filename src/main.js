@@ -15,6 +15,8 @@ require('./assets/iconfont/iconfont.woff')
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
+
+// 将请求转为简单请求方便跨域，已不需要
 // axios.interceptors.request.use(function (config) {
 //   config.headers['Content-Type'] = 'application/x-www-form-urlencoded'
 //   if (config.method === 'post') {
@@ -27,6 +29,8 @@ Vue.config.productionTip = false
 //   axios.loadinginstace.close()
 //   return Promise.reject(error)
 // })
+
+// 加载axios插件
 Vue.use(VueAxios, axios)
 
 new Vue({
@@ -34,4 +38,6 @@ new Vue({
   components: { App },
   template: '<App/>'
 })
+
+// 将md5()添加到vue实例
 Vue.prototype.md5 = md5;
