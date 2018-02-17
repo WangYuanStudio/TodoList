@@ -3,7 +3,7 @@
 		<div class="setting">
 			<div class="online" v-on:click="setonline()">
 				<input type="checkbox" v-model="setting.online" onclick="return false" />
-				<span>在线模式 </span>
+				<span>在线模式</span>
 			</div>
 			<div style="clear:both"></div>
 		</div>
@@ -13,7 +13,7 @@
 			<span class="add_button" v-on:click="push_event" v-if="true">添加</span>
 		</div>
 		<div class="list" id="event_list">
-			<div class="list_son" v-for="(todo,index) in filterlist"  v-bind:todo="todo" v-bind:index="index">
+			<div class="list_son list-item" v-for="(todo,index) in filterlist"  v-bind:todo="todo" v-bind:key="index">
 				<span class="evented" v-on:click="change_event_status(index)"><i class="iconfont icon-gou" v-bind:class="todo.status"></i></span>
 				<div class="node" v-bind:class="todo.status" v-on:click="todo.edit=true" v-if="!todo.edit">{{todo.text}}</div>
 				<p class="del" v-on:click="del_event(index,1)">×</p>
@@ -92,8 +92,12 @@ export default {
 				}
 			}
 			let keyname = this.filterlist[index].keyname;
-			this.todoDB.result.transaction('todo', "readwrite").objectStore('todo').delete(keyname);
-			this.filterlist.splice(index, 1);
+			for (let key in this.todos) {
+			    if (this.todos[key].keyname === keyname) {
+			        this.todos.splice(key, 1);
+			    }
+			}
+			this.DB_del_event(keyname)
 			if(this.setting.online){
 				this.axios.post(this.api,{
 					do:'del',
@@ -103,21 +107,23 @@ export default {
 		},
 		change_event_status:async function(index){                  //更改事件状态
 			let newstatus = '';
+			let keyname = this.filterlist[index].keyname;
+			let text = this.filterlist[index].text;
 			if(this.filterlist[index].status === "ok"){
 				newstatus = "no";
-				this.filterlist[index].status = "no";
 				this.DB_edit_event(this.filterlist[index].keyname,{status:"no"})
+				this.filterlist[index].status = "no";	
 			}
 			else{
 				newstatus = "ok";
-				this.filterlist[index].status = "ok";
 				this.DB_edit_event(this.filterlist[index].keyname,{status:"ok"})
+				this.filterlist[index].status = "ok";
 			}
 			if(this.setting.online){
 				await this.axios.post(this.api,{
 					do:'update',
-					keyname:this.filterlist[index].keyname,
-					text:this.filterlist[index].text,
+					keyname:keyname,
+					text:text,
 					status:newstatus
 				});
 			}
@@ -149,7 +155,8 @@ export default {
 				}
 				for(let i = 0;i < this.todos.length;i){
 					if(this.todos[i].status === "ok"){
-						this.todoDB.result.transaction('todo', "readwrite").objectStore('todo').delete(this.filterlist[i].keyname);
+						let keyname = this.todos[i].keyname
+						this.DB_del_event(keyname);
 						this.todos.splice(i, 1);
 					}
 					else{
@@ -199,7 +206,7 @@ export default {
 				});
 			}
 			for(let i = 0;i < this.todos.length;i++){
-				this.DB_edit_event(this.filterlist[i].keyname,{status:newstatus})
+				this.DB_edit_event(this.todos[i].keyname,{status:newstatus})
 				this.todos[i].status = newstatus
 			}
 		},
@@ -248,7 +255,8 @@ export default {
 							this.DB_push_event(data[j]);
 							data[j].edit = false;
 							data[j].edit_value = "";
-							this.todos.push(data[j])
+							this.todos.push(data[j]);
+							continue
 						}
 					}
 				}
@@ -267,6 +275,7 @@ export default {
 								text:this.todos[j].text,
 								status:this.todos[j].status
 							})
+							continue
 						}
 					}
 				}
@@ -308,6 +317,17 @@ export default {
 				}
 				// 更新数据库存储数据             
 				objectStore.put(myRecord);
+			};
+		},
+		DB_del_event(keyname){
+			let transaction = this.todoDB.result.transaction('todo', "readwrite");
+			// 打开已经存储的数据对象
+			let objectStore = transaction.objectStore('todo');
+			// 获取存储的对应键的存储对象
+			let keypath = objectStore.index('keyname');
+			let objectStoreRequest = keypath.getKey(keyname);
+			objectStoreRequest.onsuccess = function(event) {
+				objectStore.delete(objectStoreRequest.result)
 			};
 		},
 		create_DB:function(openid){
@@ -596,4 +616,7 @@ body{
 .main .footer .clear:hover{
 	text-decoration: underline;
 }
+
+/*anime*/
+
 </style>
