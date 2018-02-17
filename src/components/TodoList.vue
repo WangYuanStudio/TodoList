@@ -13,14 +13,16 @@
 			<span class="add_button" v-on:click="push_event" v-if="true">添加</span>
 		</div>
 		<div class="list" id="event_list">
-			<div class="list_son list-item" v-for="(todo,index) in filterlist"  v-bind:todo="todo" v-bind:key="index">
-				<span class="evented" v-on:click="change_event_status(index)"><i class="iconfont icon-gou" v-bind:class="todo.status"></i></span>
-				<div class="node" v-bind:class="todo.status" v-on:click="todo.edit=true" v-if="!todo.edit">{{todo.text}}</div>
-				<p class="del" v-on:click="del_event(index,1)">×</p>
-				<input type="text" v-if="todo.edit" v-on:keyup.13="push_edit(index)" v-model="todo.text" v-focus="todo.edit">
-				<div class="bg" id="bg" v-if="todo.edit" v-on:click="push_edit(index)"></div>
-				<div style="clear: both;"></div>
-			</div>
+			<transition-group name="list" tag="div">
+				<div class="list_son list-item" v-for="(todo,index) in filterlist"  v-bind:todo="todo" v-bind:key="index">
+					<span class="evented" v-on:click="change_event_status(index)"><i class="iconfont icon-gou" v-bind:class="todo.status"></i></span>
+					<div class="node" v-bind:class="todo.status" v-on:click="todo.edit=true" v-if="!todo.edit">{{todo.text}}</div>
+					<p class="del" v-on:click="del_event(index,1)">×</p>
+					<input type="text" v-if="todo.edit" v-on:keyup.13="push_edit(index)" v-model="todo.text" v-focus="todo.edit">
+					<div class="bg" id="bg" v-if="todo.edit" v-on:click="push_edit(index)"></div>
+					<div style="clear: both;"></div>
+				</div>
+			</transition-group>
 		</div>
 		<div class="footer" id="footer" v-if="todos.length">
 			<span class="sum" id="sum">{{sum}} items left</span>
@@ -111,12 +113,12 @@ export default {
 			let text = this.filterlist[index].text;
 			if(this.filterlist[index].status === "ok"){
 				newstatus = "no";
-				this.DB_edit_event(this.filterlist[index].keyname,{status:"no"})
+				this.DB_edit_event(keyname,{status:"no"})
 				this.filterlist[index].status = "no";	
 			}
 			else{
 				newstatus = "ok";
-				this.DB_edit_event(this.filterlist[index].keyname,{status:"ok"})
+				this.DB_edit_event(keyname,{status:"ok"})
 				this.filterlist[index].status = "ok";
 			}
 			if(this.setting.online){
@@ -618,5 +620,12 @@ body{
 }
 
 /*anime*/
-
+.list-enter-active {
+  transition: all 1s;
+}
+.list-enter, .list-leave-to
+/* .list-leave-active for below version 2.1.8 */ {
+  opacity: 0;
+  transform: translateX(30px);
+}
 </style>
