@@ -99,7 +99,7 @@ export default {
 			        this.todos.splice(key, 1);
 			    }
 			}
-			this.DB_del_event(keyname)
+			this.DB_del_event(keyname);
 			if(this.setting.online){
 				this.axios.post(this.api,{
 					do:'del',
@@ -258,7 +258,7 @@ export default {
 							data[j].edit = false;
 							data[j].edit_value = "";
 							this.todos.push(data[j]);
-							continue
+							break
 						}
 					}
 				}
@@ -277,7 +277,7 @@ export default {
 								text:this.todos[j].text,
 								status:this.todos[j].status
 							})
-							continue
+							break
 						}
 					}
 				}

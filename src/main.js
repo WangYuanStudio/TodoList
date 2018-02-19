@@ -2,8 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 //import qs from 'qs'
-import axios from 'axios'
-import VueAxios from 'vue-axios'
+import axios from './axios'
 import App from './App'
 import md5 from './assets/md5.js';
 require('./assets/iconfont/iconfont.css')
@@ -31,7 +30,7 @@ Vue.config.productionTip = false
 // })
 
 // 加载axios插件
-Vue.use(VueAxios, axios)
+
 
 new Vue({
   el: '#app',
