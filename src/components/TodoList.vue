@@ -61,17 +61,15 @@ export default {
 	},
 	computed:{
 		filterlist:function(){// 条件筛选
-			if(this.view === "no"){
+			if(this.view === 'all'){
+				return this.todos
+			}
+			else{
+				let view = this.view
 				return this.todos.filter(function(todo){
-					return todo.status === "no"
+					return todo.status === view
 				})
 			}
-			if(this.view === "ok"){
-				return this.todos.filter(function(todo){
-					return todo.status === "ok"
-				})
-			}
-			return this.todos
 		},
 		sum:function(){    //统计未完成事件
 			let sum = 0;

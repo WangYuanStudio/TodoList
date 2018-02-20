@@ -10,9 +10,11 @@
 
 >api的跨域地址设定地址为http://localhost:8088/
 
->默认的openid为"testopenid"
+>在线测试地址https://www.kooritea.cc/public_file/pro/todolist/
 
 >更改openid   http://localhost:8088/?openid=22336699
+
+>默认的openid为"testopenid"
 
 >暂时就这么多吧
 
