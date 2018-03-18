@@ -250,8 +250,6 @@ export default {
 				for(let i = 0;i < local_diff.length;i++){// 遍历local_diff，从服务器返回的data获取本地缺少的数据分别提交到本地数据库和vue实例
 					for(let j = 0;j < data.length;j++){
 						if(local_diff[i] === data[j].keyname){
-							delete data[j].id;
-							delete data[j].openid;
 							this.DB_push_event(data[j]);
 							data[j].edit = false;
 							data[j].edit_value = "";
@@ -269,7 +267,6 @@ export default {
 					for(let j = 0;j < this.todos.length;j++){
 						if(online_diff[i] === this.todos[j].keyname){
 							willpush.push({
-								openid:this.openid,
 								do:'add',
 								keyname:this.todos[j].keyname,
 								text:this.todos[j].text,
@@ -279,11 +276,13 @@ export default {
 						}
 					}
 				}
-				await this.axios.post(this.api,{
-					do:'updateall',
-					openid:this.openid,
-					todos:willpush
-				})
+				if(willpush.length){
+					await this.axios.post(this.api,{
+						do:'updateall',
+						openid:this.openid,
+						todos:willpush
+					})
+				}
 			}
 		},
 		DB_push_event:function(data){// 向本地数据库提交事件
