@@ -3,7 +3,12 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-
+require('./assets/iconfont/iconfont.css')
+require('./assets/iconfont/iconfont.eot')
+require('./assets/iconfont/iconfont.js')
+require('./assets/iconfont/iconfont.svg')
+require('./assets/iconfont/iconfont.ttf')
+require('./assets/iconfont/iconfont.woff')
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
