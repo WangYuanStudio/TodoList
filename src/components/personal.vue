@@ -12,9 +12,11 @@
   <div class="todos">
     <div class="todo" v-bind:style="{backgroundColor:todo.team?'#5d707b':'#fff'}" v-for='(todo,index) in filter' v-bind:index='index'>
       <div class="view" v-on:click="showOperation(todo)">
-        <div class="status">
-          <img v-if="todo.finshed" src="../assets/icon/ok.png" alt="">
-          <img v-else src="../assets/icon/no.png" alt="">
+        <div class="status" v-if="todo.finshed" v-on:click="cancelTodo(todo)">
+          <img src="../assets/icon/ok.png" alt="">
+        </div>
+        <div class="status" v-else v-on:click="finshing(todo)">
+          <img src="../assets/icon/no.png" alt="">
         </div>
         <div class="text" v-bind:class="{showlimit:!todo.showmore}" v-bind:style="{color:todo.team?'#fff':'#000'}">{{todo.text}}</div>
         <div style="clear:both"></div>
