@@ -21,24 +21,24 @@
       </div>
       <div class="operation" v-if="todo.showmore">
         <div class="personalTodo" v-if="!todo.team">
-          <div v-if="!todo.finshed">
+          <div class="nofinshed" v-if="!todo.finshed">
             <span v-on:click="openAlert(todo,'xiugai')"><i class="iconfont icon-xiugai"></i>修改</span>
             <span v-on:click="finshing(todo)"><i class="iconfont icon-wancheng1"></i>完成</span>
             <span v-on:click="deleteTodo(todo)"><i class="iconfont icon-icon"></i>删除</span>
           </div>
-          <div v-else>
+          <div class="finshed" v-else>
             <span v-on:click="deleteTodo(todo)"><i class="iconfont icon-icon"></i>删除</span>
             <span v-on:click="cancelTodo(todo)"><i class="iconfont icon-wuuiconsuoxiao"></i>取消</span>
           </div>
         </div>
         <div class="teamTodo" v-else>
-          <div v-if="!todo.finshed">
+          <div class="nofinshed" v-if="!todo.finshed">
             <span v-on:click="finshing(todo)"><i class="iconfont icon-wancheng1"></i>完成</span>
             <span v-on:click="openAlert(todo,'danmu')"><i class="iconfont icon-danmu"></i>弹幕</span>
             <span v-on:click="openAlert(todo,'detail')"><i class="iconfont icon-detail"></i>详细</span>
             <span class="teamName">{{todo.teamInfo.teamName}}</span>
           </div>
-          <div v-else>
+          <div class="finshed" v-else>
             <span v-on:click="deleteTodo(todo)"><i class="iconfont icon-icon"></i>删除</span>
             <span v-on:click="cancelTodo(todo)"><i class="iconfont icon-wuuiconsuoxiao"></i>取消</span>
             <span class="teamName">{{todo.teamInfo.teamName}}</span>
@@ -309,19 +309,24 @@ export default {
 }
 .personal .todos .todo .operation span{
   float: left;
-  margin-right: 32px;
   font-size: 18px;
 }
 .personal .todos .todo .operation span i{
   padding: 0 11px;
   font-size: 18px;
 }
+.personal .todos .todo .operation .nofinshed span{
+  margin-right: 32px;
+}
+.personal .todos .todo .operation .finshed span{
+  margin-right: 66px;
+}
 .personal .todos .todo .operation .teamName{
   float: right;
   padding: 0 8px;
   color:#9db6c4;
   font-size: 18px;
-  margin-right: 0;
+  margin-right: 0!important;
 }
 .personal .noTodo{
   position: absolute;
@@ -411,7 +416,7 @@ export default {
   padding: 20px 0;
 }
 .personal .alertBG .alert .detail .icon i{
-  font-size: 32px;
+  font-size: 48px;
   color: #84caf1;
 }
 .personal .alertBG .alert .detail .info p{

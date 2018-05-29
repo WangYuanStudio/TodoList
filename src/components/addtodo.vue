@@ -4,14 +4,14 @@
     <div class="addIcon" v-on:click="button = !button">
       <img src="../assets/icon/add.png">
     </div>
-    <div class="personalIcon" v-on:click="main = true;type = 'personal'" v-bind:style="{top:button?'-90%':'0',pointerEvents:button?'':'none',opacity:button?'1':'0'}">
+    <div class="personalIcon" v-on:click="button =false;main = true;type = 'personal'" v-bind:style="{top:button?'-90%':'0',pointerEvents:button?'':'none',opacity:button?'1':'0'}">
       <i class="iconfont icon-personal"></i>
     </div>
-    <div class="teamIcon" v-on:click="main = true;type = 'team'" v-bind:style="{top:button?'-180%':'0',pointerEvents:button?'':'none',opacity:button?'1':'0'}">
+    <div class="teamIcon" v-on:click="button =false;main = true;type = 'team'" v-bind:style="{top:button?'-180%':'0',pointerEvents:button?'':'none',opacity:button?'1':'0'}">
       <i class="iconfont icon-tuandui"></i>
     </div>
   </div>
-  <div class="addTodoBG" v-on:click.self="main = false" v-if="main">
+  <div class="addTodoBG" v-if="main">
     <div class="addTodoFrom">
       <div class="selectType">
         <div class="personalType" v-on:click="type = 'personal'">
@@ -30,7 +30,7 @@
       </div>
       <div class="teamInput" v-else>
         <select v-model="team.seletedTeamName">
-          <option v-for="(team,index) in teams" v-bind:index='index' v-bind:valve="team.num">{{team.name}}</option>
+          <option v-for="(team,index) in teams" v-bind:index='index' v-bind:value="team.num">{{team.name}}</option>
         </select>
         <div class="weui-cell">
           <div class="weui-cell__bd">
@@ -40,7 +40,7 @@
         <input type="text" v-bind:style="{borderColor:team.teamInput.length?'#1aa6f4':'#e5e5e5'}" v-focus placeholder="请输入代办事项" v-model="team.teamInput">
       </div>
       <div class="button">
-        <div class="cancel" v-on:click="">
+        <div class="cancel" v-on:click.self="main = false">
           取消
         </div>
         <div class="confirm" v-on:click="">
@@ -71,7 +71,7 @@ export default {
       teams:[
         {
           name:'bilibili',
-          value:'2233'
+          num:'2233'
         },
         {
           name:'幻想乡',
@@ -82,6 +82,15 @@ export default {
           num:'2'
         }
       ]
+    }
+  },
+  watch:{
+    main:function(newValue,oldValue){
+      if(newValue){
+        this.personal.personalInput = '';
+        this.team.teamInput = '';
+        this.team.seletedTeamName = this.teams[0].num
+      }
     }
   },
   directives: {
