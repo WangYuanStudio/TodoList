@@ -6,6 +6,7 @@
     </header>
     <main>
       <router-view></router-view>
+      <addTodo />
     </main>
     <footer>
       <router-link to="/personal">
@@ -31,12 +32,16 @@
 </template>
 
 <script>
+import addTodo from './components/addtodo'
 export default {
   name: 'app',
   data(){
     return {
 
     }
+  },
+  components: {
+    addTodo
   },
   computed:{
     select(){

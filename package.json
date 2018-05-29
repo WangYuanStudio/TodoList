@@ -1,6 +1,6 @@
 {
   "name": "todolist",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "todolist 第二版",
   "author": "kooritea <ochatokori@gmail.com>",
   "private": true,
@@ -18,7 +18,8 @@
     "postcss-viewport-units": "^0.1.4",
     "postcss-write-svg": "^3.0.1",
     "vue": "^2.5.2",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vuex": "^3.0.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.5",

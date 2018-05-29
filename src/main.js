@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import store from './store'
 require('./assets/iconfont/iconfont.css')
 require('./assets/iconfont/iconfont.eot')
 require('./assets/iconfont/iconfont.js')
