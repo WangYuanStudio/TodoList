@@ -2,6 +2,10 @@
 
 > todolist 第二版
 
+## 在线测试地址(30m更新一次)
+
+[https://www.kooritea.cc/public_file/pro/todolistv2/dist/index.html](https://www.kooritea.cc/public_file/pro/todolistv2/dist/)
+
 ## Build Setup
 
 ``` bash
