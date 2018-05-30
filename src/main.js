@@ -4,6 +4,8 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from './store'
+import axios from './axios'
+import ebus from './assets/ebus.js'
 require('./assets/iconfont/iconfont.css')
 require('./assets/iconfont/iconfont.eot')
 require('./assets/iconfont/iconfont.js')
@@ -16,6 +18,7 @@ Vue.config.productionTip = false
 new Vue({
   el: '#app',
   router,
+  store,
   template: '<App/>',
   components: { App }
 })

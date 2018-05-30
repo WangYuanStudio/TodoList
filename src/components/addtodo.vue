@@ -29,8 +29,8 @@
         <input type="text" v-bind:style="{borderColor:personal.personalInput.length?'#1aa6f4':'#e5e5e5'}" v-focus placeholder="请输入代办事项" v-model="personal.personalInput">
       </div>
       <div class="teamInput" v-else>
-        <select v-model="team.seletedTeamName">
-          <option v-for="(team,index) in teams" v-bind:index='index' v-bind:value="team.num">{{team.name}}</option>
+        <select v-model="team.teamIndex">
+          <option v-for="(item,index) in teams" v-bind:index='index' v-bind:value="index">{{item.name}}</option>
         </select>
         <div class="weui-cell">
           <div class="weui-cell__bd">
@@ -43,7 +43,7 @@
         <div class="cancel" v-on:click.self="main = false">
           取消
         </div>
-        <div class="confirm" v-on:click="">
+        <div class="confirm" v-on:click="pushNewTodo">
           确认
         </div>
       </div>
@@ -53,6 +53,9 @@
 </template>
 
 <script>
+import ebus from '../assets/ebus.js'
+import pubjs from '../assets/public.js'
+
 export default {
   name:'addtodo',
   data(){
@@ -65,7 +68,7 @@ export default {
       },
       team:{
         teamInput:'',
-        seletedTeamName:'',
+        teamIndex:'',
         time:''
       },
       teams:[
@@ -82,6 +85,31 @@ export default {
           num:'2'
         }
       ]
+    }
+  },
+  methods:{
+    pushNewTodo(){
+      let msg = {}
+      if(this.type === 'personal'){
+        msg = {
+          team:false,
+          text:this.personal.personalInput
+        }
+      }
+      else{
+        msg = {
+          team:true,
+          text:this.team.teamInput,
+          teamInfo:{
+            teamName:this.teams[this.team.teamIndex].name,
+            sendTime:pubjs.format(new Date(),'yyyy-MM-dd HH:mm'),
+            byTheTime:pubjs.format(this.team.time,'yyyy-MM-dd HH:mm'),
+            teamNum:this.teams[this.team.teamIndex].num,
+          }
+        }
+      }
+      ebus.$emit('pushNewTodo',msg)
+      this.main = false
     }
   },
   watch:{

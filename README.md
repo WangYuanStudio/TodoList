@@ -4,7 +4,7 @@
 
 ## 在线测试地址(30m更新一次)
 
-[https://www.kooritea.cc/public_file/pro/todolistv2/dist/index.html](https://www.kooritea.cc/public_file/pro/todolistv2/dist/)
+散了吧测试不了
 
 ## Build Setup
 

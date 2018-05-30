@@ -10,19 +10,19 @@
     </div>
   </div>
   <div class="todos">
-    <div class="todo" v-bind:style="{backgroundColor:todo.team?'#5d707b':'#fff'}" v-for='(todo,index) in filter' v-bind:index='index'>
+    <div class="todo" v-bind:style="{backgroundColor:todo.team?'#5d707b':'#fff'}" v-for='(todo,index) in todoFilter' v-bind:index='index'>
       <div class="view" v-on:click="showOperation(todo)">
-        <div class="status" v-if="todo.finshed" v-on:click="cancelTodo(todo)">
+        <div class="status" v-if="todo.finshed" v-on:click.stop="cancelTodo(todo)">
           <img src="../assets/icon/ok.png" alt="">
         </div>
-        <div class="status" v-else v-on:click="finshing(todo)">
+        <div class="status" v-else v-on:click.stop="finshing(todo)">
           <img src="../assets/icon/no.png" alt="">
         </div>
         <div class="text" v-bind:class="{showlimit:!todo.showmore}" v-bind:style="{color:todo.team?'#fff':'#000'}">{{todo.text}}</div>
         <div style="clear:both"></div>
       </div>
       <div class="operation" v-if="todo.showmore">
-        <div class="personalTodo" v-if="!todo.team">
+        <div class="personalTodo">
           <div class="nofinshed" v-if="!todo.finshed">
             <span v-on:click="openAlert(todo,'xiugai')"><i class="iconfont icon-xiugai"></i>修改</span>
             <span v-on:click="finshing(todo)"><i class="iconfont icon-wancheng1"></i>完成</span>
@@ -33,7 +33,21 @@
             <span v-on:click="cancelTodo(todo)"><i class="iconfont icon-wuuiconsuoxiao"></i>取消</span>
           </div>
         </div>
-        <div class="teamTodo" v-else>
+      </div>
+    </div>
+    <div class="todo" style="background-color:#5d707b" v-for='(todo,index) in teamTodoFilter' v-bind:index='index'>
+      <div class="view" v-on:click="showOperation(todo)">
+        <div class="status" v-if="todo.finshed" v-on:click.stop="cancelTodo(todo)">
+          <img src="../assets/icon/ok.png" alt="">
+        </div>
+        <div class="status" v-else v-on:click.stop="finshing(todo)">
+          <img src="../assets/icon/no.png" alt="">
+        </div>
+        <div class="text" v-bind:class="{showlimit:!todo.showmore}" style="color:#fff">{{todo.text}}</div>
+        <div style="clear:both"></div>
+      </div>
+      <div class="operation" v-if="todo.showmore">
+        <div class="teamTodo">
           <div class="nofinshed" v-if="!todo.finshed">
             <span v-on:click="finshing(todo)"><i class="iconfont icon-wancheng1"></i>完成</span>
             <span v-on:click="openAlert(todo,'danmu')"><i class="iconfont icon-danmu"></i>弹幕</span>
@@ -49,7 +63,7 @@
       </div>
     </div>
   </div>
-  <div class="noTodo" v-if="!filter.length">
+  <div class="noTodo" v-if="!(todoFilter.length+teamTodoFilter.length)">
     <img src="../assets/icon/logo.png" v-if="complete">
     <img src="../assets/icon/logo2.png" v-else>
     <p style="color:#000" v-if="complete">Nothing finished!</p>
@@ -93,47 +107,14 @@
 </div>
 </template>
 <script>
+import ebus from '../assets/ebus.js'
+import pubjs from '../assets/public.js'
+
 export default {
   name: 'personal',
   data () {
     return {
       todos:[
-        // {
-        //   text:'2233真可爱',
-        //   finshed:false,
-        //   team:false,
-        //   showmore:false
-        // },
-        // {
-        //   text:'2233真可爱',
-        //   finshed:false,
-        //   team:false,
-        //   showmore:false
-        // },
-        // {
-        //   text:'2233真可爱',
-        //   finshed:false,
-        //   team:false,
-        //   showmore:false
-        // },
-        // {
-        //   text:'2233真可爱',
-        //   finshed:false,
-        //   team:false,
-        //   showmore:false
-        // },
-        // {
-        //   text:'2233真可爱',
-        //   finshed:false,
-        //   team:false,
-        //   showmore:false
-        // },
-        // {
-        //   text:'2233真可爱',
-        //   finshed:false,
-        //   team:false,
-        //   showmore:false
-        // },
         {
           text:'2233真可爱',
           finshed:false,
@@ -141,11 +122,13 @@ export default {
           showmore:false
         },
         {
-          text:'真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱',
+          text:'真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱',
           finshed:false,
           team:false,
           showmore:false
-        },
+        }
+      ],
+      teamTodos:[
         {
           text:'2233真可爱',
           finshed:false,
@@ -160,7 +143,6 @@ export default {
             byTheTime:'2018-06-16',
             teamNum:'23333333'
           }
-
         }
       ],
       complete:false,//用于切换完成和未完成
@@ -169,7 +151,7 @@ export default {
         show:false,
         alertInput:'',//弹窗的输入内容
         type:'xiugai',
-        index:null,
+        todoObj:null,
         teamInfo:{
           teamName:'',
           sendTime:'',
@@ -180,8 +162,13 @@ export default {
     }
   },
   computed:{
-    filter(){
+    todoFilter(){
       return this.todos.filter((todo) => {
+        return todo.finshed === this.complete
+      })
+    },
+    teamTodoFilter(){
+      return this.teamTodos.filter((todo) => {
         return todo.finshed === this.complete
       })
     },
@@ -191,16 +178,15 @@ export default {
   },
   methods: {
     showOperation(todo){
-      let index = this.todos.indexOf(todo)
-      if(this.todos[index].showmore){
-        this.todos[index].showmore = false
+      if(todo.showmore){
+        todo.showmore = false
       }
       else{
         if(this.lastFocus !== null){
-          this.todos[this.lastFocus].showmore = false
+          this.lastFocus.showmore = false
         }
-        this.lastFocus = index;
-        this.todos[index].showmore = true
+        this.lastFocus = todo;
+        todo.showmore = true
       }
     },
     openAlert(todo,type){
@@ -217,39 +203,57 @@ export default {
           break
       }
       this.alert.show=true;
-      this.alert.index=this.todos.indexOf(todo)
+      this.alert.todoObj=todo
     },
     finshing(todo){//完成某个事件
-      let index = this.todos.indexOf(todo)
-      this.todos[index].showmore = false
-      this.todos[index].finshed = true
+      todo.showmore = false
+      todo.finshed = true
     },
     deleteTodo(todo){//删除某件已完成事件
-      let index = this.todos.indexOf(todo)
-      this.todos.splice(index,1);
+      let index
+      if(todo.team){
+        index = this.teamTodos.indexOf(todo)
+        this.teamTodos.splice(index,1);
+      }
+      else{
+        index = this.todos.indexOf(todo)
+        this.todos.splice(index,1);
+      }
     },
     cancelTodo(todo){
-      let index = this.todos.indexOf(todo)
-      this.todos[index].showmore = false
-      this.todos[index].finshed = false
+      todo.showmore = false
+      todo.finshed = false
     },
     alertConfirm(alertInfo){//提交弹幕或提交修改
       switch(alertInfo.type){
         case 'danmu':
-          this.todos[alertInfo.index].danmu.push(alertInfo.alertInput);
+          alertInfo.todoObj.danmu.push(alertInfo.alertInput);
           break
         case 'xiugai':
           if(alertInfo.alertInput){
-            this.todos[alertInfo.index].text = alertInfo.alertInput;
+            alertInfo.todoObj.text = alertInfo.alertInput;
           }
           break
       }
       this.alert.alertInput='';
       this.alert.show=false
+    },
+    initEvent(){
+      ebus.$on('pushNewTodo',(data)=>{
+        data.finshed = false
+        data.showmore = false
+        data.danmu=[]
+        if(data.team){
+          this.teamTodos.push(data)
+        }
+        else{
+          this.todos.push(data)
+        }
+      })
     }
   },
   mounted() {
-
+    this.initEvent()
   },
   directives: {
     focus:{
@@ -327,15 +331,15 @@ export default {
 .personal .todos .todo .view .text{
   float: left;
   margin: 33px 20px 33px 81px;
-  line-height: 40px;
-  font-size: 24px;
+  line-height: 45px;
+  font-size: 28px;
   transition: height 0.2s;
 }
 .personal .todos .todo .view .showlimit{
   height: 40px;
   text-overflow: ellipsis;
   white-space: nowrap;
-  width: calc(100% - 81px);
+  width: calc(100% - 115px);
   overflow: hidden;
 }
 .personal .todos .todo .operation{
@@ -353,7 +357,7 @@ export default {
   font-size: 18px;
 }
 .personal .todos .todo .operation span i{
-  padding: 0 11px;
+  padding: 0 11px 0 0;
   font-size: 18px;
 }
 .personal .todos .todo .operation .nofinshed span{
@@ -409,6 +413,9 @@ export default {
 .personal .alertBG .alert .changeSomeThing .icon i{
   font-size: 32px;
   color: #84caf1;
+}
+.personal .alertBG .alert .changeSomeThing .icon .icon-danmu{
+  font-size: 40px;
 }
 .personal .alertBG .alert .changeSomeThing .input{
   position: relative;
