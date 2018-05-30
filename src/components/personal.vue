@@ -98,6 +98,42 @@ export default {
   data () {
     return {
       todos:[
+        // {
+        //   text:'2233真可爱',
+        //   finshed:false,
+        //   team:false,
+        //   showmore:false
+        // },
+        // {
+        //   text:'2233真可爱',
+        //   finshed:false,
+        //   team:false,
+        //   showmore:false
+        // },
+        // {
+        //   text:'2233真可爱',
+        //   finshed:false,
+        //   team:false,
+        //   showmore:false
+        // },
+        // {
+        //   text:'2233真可爱',
+        //   finshed:false,
+        //   team:false,
+        //   showmore:false
+        // },
+        // {
+        //   text:'2233真可爱',
+        //   finshed:false,
+        //   team:false,
+        //   showmore:false
+        // },
+        // {
+        //   text:'2233真可爱',
+        //   finshed:false,
+        //   team:false,
+        //   showmore:false
+        // },
         {
           text:'2233真可爱',
           finshed:false,
@@ -264,6 +300,7 @@ export default {
 }
 .personal .todos{
   position: relative;
+  padding-bottom: 150px;
 }
 .personal .todos .todo{
   position: relative;
@@ -272,6 +309,9 @@ export default {
   margin: 24px auto;
   min-height: 106px;
   border-radius: 10px;
+}
+.personal .todos .todo .view{
+  position: relative;
 }
 .personal .todos .todo .view .status{
   position: absolute;
@@ -286,18 +326,17 @@ export default {
 }
 .personal .todos .todo .view .text{
   float: left;
-  margin: 24px 20px 24px 81px;
-  line-height: 36px;
+  margin: 33px 20px 33px 81px;
+  line-height: 40px;
   font-size: 24px;
-  min-height: 58px;
   transition: height 0.2s;
 }
 .personal .todos .todo .view .showlimit{
-  overflow : hidden;
+  height: 40px;
   text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  white-space: nowrap;
+  width: calc(100% - 81px);
+  overflow: hidden;
 }
 .personal .todos .todo .operation{
   position: relative;

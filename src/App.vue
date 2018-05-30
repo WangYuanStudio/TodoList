@@ -83,7 +83,12 @@ header {
   box-shadow: 0px 5px 5px #eee;
   font-size: 28px;
   line-height: 80px;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #fff;
+  z-index: 100;
 }
 header .meau{
   position: absolute;
@@ -93,8 +98,10 @@ header .meau{
   transform: translateY(-50%);
 }
 main {
-  min-height: calc(100vh - 80px - 86px);
+  height: calc(100vh - 80px - 86px);
   position: relative;
+  margin: 80px 0 86px 0;
+  overflow-y: auto;
 }
 footer{
   position: fixed;
@@ -103,6 +110,7 @@ footer{
   bottom: 0;
   width: 100%;
   font-size: 20px;
+  background-color: #fff;
 }
 footer .personal{
   position: relative;
