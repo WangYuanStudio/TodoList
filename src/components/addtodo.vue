@@ -70,21 +70,12 @@ export default {
         teamInput:'',
         teamIndex:'',
         time:''
-      },
-      teams:[
-        {
-          name:'bilibili',
-          num:'2233'
-        },
-        {
-          name:'幻想乡',
-          num:'9'
-        },
-        {
-          name:'niconico',
-          num:'2'
-        }
-      ]
+      }
+    }
+  },
+  computed:{
+    teams(){
+      return this.$store.state.createTeams
     }
   },
   methods:{
@@ -93,23 +84,30 @@ export default {
       if(this.type === 'personal'){
         msg = {
           team:false,
-          text:this.personal.personalInput
+          content:this.personal.personalInput
         }
+        ebus.$emit('pushNewPersonalTodo',msg)
+        this.main = false
       }
       else{
-        msg = {
-          team:true,
-          text:this.team.teamInput,
-          teamInfo:{
-            teamName:this.teams[this.team.teamIndex].name,
-            sendTime:pubjs.format(new Date(),'yyyy-MM-dd HH:mm'),
-            byTheTime:pubjs.format(this.team.time,'yyyy-MM-dd HH:mm'),
-            teamNum:this.teams[this.team.teamIndex].num,
+        if(this.teams[this.team.teamIndex]){
+          if(!this.team.time){
+            alert('必须填写结束时间')
+            return
           }
+          msg = {
+            team:true,
+            content:this.team.teamInput,
+            teamInfo:{
+              teamName:this.teams[this.team.teamIndex].name,
+              end_time:pubjs.format(this.team.time,'yyyy-MM-dd HH:mm'),
+              group_id:this.teams[this.team.teamIndex].id,
+            }
+          }
+          ebus.$emit('pushNewTeamTodo',msg)
+          this.main = false
         }
       }
-      ebus.$emit('pushNewTodo',msg)
-      this.main = false
     }
   },
   watch:{
@@ -117,9 +115,14 @@ export default {
       if(newValue){
         this.personal.personalInput = '';
         this.team.teamInput = '';
-        this.team.seletedTeamName = this.teams[0].num
+        if(this.teams.length>0){
+          this.team.teamIndex = 0
+        }
       }
     }
+  },
+  mounted(){
+
   },
   directives: {
     focus:{

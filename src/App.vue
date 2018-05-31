@@ -61,19 +61,6 @@ export default {
     },
   },
   methods:{
-    getQueryString(name) {
-      let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
-      let reg_rewrite = new RegExp("(^|/)" + name + "/([^/]*)(/|$)", "i");
-      let r = window.location.search.substr(1).match(reg);
-      let q = window.location.pathname.substr(1).match(reg_rewrite);
-      if(r != null){
-          return unescape(r[2]);
-      }else if(q != null){
-          return unescape(q[2]);
-      }else{
-          return null;
-      }
-    },
     async login(){
       let code
       try{
@@ -84,6 +71,7 @@ export default {
       }
       let data = await this.axios.get(`/login/${code}`)
       if(data.data.code === 200){
+        console.log(data.data.token)
         this.$store.commit({
           type:'updateToken',
           token:data.data.token,
@@ -92,10 +80,28 @@ export default {
       else{
         location.href="http://test.yuanmoc.com/auth"
       }
+    },
+    initCreateTeams(){
+      this.axios.get('/group').then((rep)=>{
+        this.$store.commit({
+          type:'pushCreateTeams',
+          createTeams:rep.data.data
+        })
+      })
+    },
+    initJoinTeams(){
+      this.axios.get('/group/add').then((rep)=>{
+        this.$store.commit({
+          type:'pushJoinTeams',
+          createTeams:rep.data.data
+        })
+      })
     }
   },
   mounted(){
     //this.login()
+    this.initJoinTeams()
+    this.initCreateTeams()
   }
 
 }

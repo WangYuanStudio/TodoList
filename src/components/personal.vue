@@ -2,28 +2,28 @@
 <div class="personal">
   <div class="selector">
     <div class="slideAcutely">
-      <span v-on:click="complete=false">未完成</span>
-      <span v-on:click="complete=true">已完成</span>
+      <span v-on:click="complete=0">未完成</span>
+      <span v-on:click="complete=1">已完成</span>
       <div class="slide" v-bind:style="{left:complete?'50%':'0%'}">
         {{slideText}}
       </div>
     </div>
   </div>
   <div class="todos">
-    <div class="todo" v-bind:style="{backgroundColor:todo.team?'#5d707b':'#fff'}" v-for='(todo,index) in todoFilter' v-bind:index='index'>
+    <div class="todo" style="background-color:#fff" v-for='(todo,index) in todoFilter' v-bind:index='index'>
       <div class="view" v-on:click="showOperation(todo)">
-        <div class="status" v-if="todo.finshed" v-on:click.stop="cancelTodo(todo)">
+        <div class="status" v-if="todo.status" v-on:click.stop="cancelTodo(todo)">
           <img src="../assets/icon/ok.png" alt="">
         </div>
         <div class="status" v-else v-on:click.stop="finshing(todo)">
           <img src="../assets/icon/no.png" alt="">
         </div>
-        <div class="text" v-bind:class="{showlimit:!todo.showmore}" v-bind:style="{color:todo.team?'#fff':'#000'}">{{todo.text}}</div>
+        <div class="text" v-bind:class="{showlimit:!todo.showmore}" v-bind:style="{color:todo.team?'#fff':'#000'}">{{todo.content}}</div>
         <div style="clear:both"></div>
       </div>
       <div class="operation" v-if="todo.showmore">
         <div class="personalTodo">
-          <div class="nofinshed" v-if="!todo.finshed">
+          <div class="nofinshed" v-if="!todo.status">
             <span v-on:click="openAlert(todo,'xiugai')"><i class="iconfont icon-xiugai"></i>修改</span>
             <span v-on:click="finshing(todo)"><i class="iconfont icon-wancheng1"></i>完成</span>
             <span v-on:click="deleteTodo(todo)"><i class="iconfont icon-icon"></i>删除</span>
@@ -37,18 +37,18 @@
     </div>
     <div class="todo" style="background-color:#5d707b" v-for='(todo,index) in teamTodoFilter' v-bind:index='index'>
       <div class="view" v-on:click="showOperation(todo)">
-        <div class="status" v-if="todo.finshed" v-on:click.stop="cancelTodo(todo)">
+        <div class="status" v-if="todo.status" v-on:click.stop="cancelTodo(todo)">
           <img src="../assets/icon/ok.png" alt="">
         </div>
         <div class="status" v-else v-on:click.stop="finshing(todo)">
           <img src="../assets/icon/no.png" alt="">
         </div>
-        <div class="text" v-bind:class="{showlimit:!todo.showmore}" style="color:#fff">{{todo.text}}</div>
+        <div class="text" v-bind:class="{showlimit:!todo.showmore}" style="color:#fff">{{todo.content}}</div>
         <div style="clear:both"></div>
       </div>
       <div class="operation" v-if="todo.showmore">
         <div class="teamTodo">
-          <div class="nofinshed" v-if="!todo.finshed">
+          <div class="nofinshed" v-if="!todo.status">
             <span v-on:click="finshing(todo)"><i class="iconfont icon-wancheng1"></i>完成</span>
             <span v-on:click="openAlert(todo,'danmu')"><i class="iconfont icon-danmu"></i>弹幕</span>
             <span v-on:click="openAlert(todo,'detail')"><i class="iconfont icon-detail"></i>详细</span>
@@ -94,9 +94,9 @@
         </div>
         <div class="info">
           <p>团队名字：{{alert.teamInfo.teamName}}</p>
-          <p>发送时间：{{alert.teamInfo.sendTime}}</p>
-          <p>截止时间：{{alert.teamInfo.byTheTime}}</p>
-          <p>团队代号：{{alert.teamInfo.teamNum}}</p>
+          <p>发送时间：{{alert.teamInfo.created_at}}</p>
+          <p>截止时间：{{alert.teamInfo.end_time}}</p>
+          <p>团队代号：{{alert.teamInfo.groupcode}}</p>
         </div>
         <div class="cancel">
           <span v-on:click="alert.show=false">返回</span>
@@ -115,37 +115,33 @@ export default {
   data () {
     return {
       todos:[
-        {
-          text:'2233真可爱',
-          finshed:false,
-          team:false,
-          showmore:false
-        },
-        {
-          text:'真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱真可爱',
-          finshed:false,
-          team:false,
-          showmore:false
-        }
+        // {
+        //   content:'123123'
+        //   team:false,
+        //   showmore:false
+        // },
+        // {
+        //   content:'123123'
+        //   team:false,
+        //   showmore:false
+        // }
       ],
       teamTodos:[
-        {
-          text:'2233真可爱',
-          finshed:false,
-          team:true,
-          showmore:false,
-          danmu:[
-            666,6666,66666
-          ],
-          teamInfo:{
-            teamName:'bilibili',
-            sendTime:'2018-03-05 25:16',
-            byTheTime:'2018-06-16',
-            teamNum:'23333333'
-          }
-        }
+        // {
+        //   team:true,
+        //   showmore:false,
+        //   danmu:[
+        //     666,6666,66666
+        //   ],
+        //   teamInfo:{
+        //     teamName:'bilibili',
+        //     created_at:'2018-03-05 25:16',
+        //     end_time:'2018-06-16',
+        //     groupcode:'23333333'
+        //   }
+        // }
       ],
-      complete:false,//用于切换完成和未完成
+      complete:0,//用于切换完成和未完成
       lastFocus:null,
       alert:{
         show:false,
@@ -154,9 +150,9 @@ export default {
         todoObj:null,
         teamInfo:{
           teamName:'',
-          sendTime:'',
-          byTheTime:'',
-          teamNum:''
+          created_at:'',
+          end_time:'',
+          groupcode:''
         }
       }
     }
@@ -164,12 +160,12 @@ export default {
   computed:{
     todoFilter(){
       return this.todos.filter((todo) => {
-        return todo.finshed === this.complete
+        return todo.status === this.complete
       })
     },
     teamTodoFilter(){
       return this.teamTodos.filter((todo) => {
-        return todo.finshed === this.complete
+        return todo.status === this.complete
       })
     },
     slideText(){
@@ -196,7 +192,7 @@ export default {
           this.alert.alertInput=''
           break
         case 'xiugai':
-          this.alert.alertInput=todo.text
+          this.alert.alertInput=todo.content
           break
         case 'detail':
           this.alert.teamInfo = todo.teamInfo
@@ -207,53 +203,108 @@ export default {
     },
     finshing(todo){//完成某个事件
       todo.showmore = false
-      todo.finshed = true
+      if(todo.team){
+        todo.status=1
+        this.axios.patch(`/task/${todo.id}`,{
+          status:1
+        })
+      }
+      else{
+        todo.status = 1
+        this.axios.patch(`/personal/${todo.id}`,{
+          status:1
+        })
+      }
     },
     deleteTodo(todo){//删除某件已完成事件
       let index
       if(todo.team){
         index = this.teamTodos.indexOf(todo)
         this.teamTodos.splice(index,1);
+        this.axios.delete(`/task/${todo.id}/personal`)
       }
       else{
         index = this.todos.indexOf(todo)
         this.todos.splice(index,1);
+        this.axios.delete(`/personal/${todo.id}`)
       }
     },
     cancelTodo(todo){
-      todo.showmore = false
-      todo.finshed = false
+      if(todo.team){
+        todo.showmore = false
+        todo.status = 0
+        this.axios.patch(`/task/${todo.id}`,{
+          status:0
+        })
+      }
+      else{
+        todo.showmore = false
+        todo.status = 0
+        this.axios.patch(`/personal/${todo.id}`,{
+          status:0
+        })
+      }
     },
     alertConfirm(alertInfo){//提交弹幕或提交修改
       switch(alertInfo.type){
         case 'danmu':
-          alertInfo.todoObj.danmu.push(alertInfo.alertInput);
+          if(alertInfo.alertInput){
+            alertInfo.todoObj.danmu.push(alertInfo.alertInput);
+          }
           break
         case 'xiugai':
           if(alertInfo.alertInput){
-            alertInfo.todoObj.text = alertInfo.alertInput;
+            alertInfo.todoObj.content = alertInfo.alertInput;
+            this.axios.patch(`/personal/${alertInfo.todoObj.id}`,{
+              content:alertInfo.alertInput
+            })
           }
           break
       }
       this.alert.alertInput='';
       this.alert.show=false
     },
+    initList(){
+      this.axios.get('/personal').then((rep)=>{
+        for(let item of rep.data.data){
+          this.todos.push(Object.assign({
+            team:false,
+            showmore:false
+          },item))
+        }
+      })
+      this.axios.get('/task').then((rep)=>{
+        for(let item of rep.data.data){
+          for(let ttodo of item.task){
+            ttodo.team=true
+            ttodo.showmore=false
+            this.teamTodos.push(ttodo)
+            ttodo.teamInfo = {
+              teamName:item.group.name,
+              created_at:ttodo.created_at,
+              end_time:ttodo.end_time,
+              groupcode:item.group.groupcode
+            }
+          }
+        }
+      })
+    },
     initEvent(){
-      ebus.$on('pushNewTodo',(data)=>{
-        data.finshed = false
-        data.showmore = false
+      ebus.$on('pushNewPersonalTodo',(data)=>{
+        data.status = 0
         data.danmu=[]
-        if(data.team){
-          this.teamTodos.push(data)
-        }
-        else{
-          this.todos.push(data)
-        }
+        this.todos.push(data)
+        this.axios.post('/personal',{
+          content:data.content
+        }).then((rep)=>{
+          Object.assign(data,rep.data.data)
+        })
       })
     }
   },
   mounted() {
     this.initEvent()
+    this.initList()
   },
   directives: {
     focus:{
@@ -334,6 +385,7 @@ export default {
   line-height: 45px;
   font-size: 28px;
   transition: height 0.2s;
+  word-break:break-all;
 }
 .personal .todos .todo .view .showlimit{
   height: 40px;
@@ -469,6 +521,7 @@ export default {
 }
 .personal .alertBG .alert .detail .info p{
   margin:0 0 22px 40px;
+  font-size: 24px;
 }
 .personal .alertBG .alert .detail .cancel{
   color: #84caf1;
