@@ -1,11 +1,5 @@
 <template>
 <div class="team">
-  <div class="createBG" v-if="!createTeams.length">
-    <div class="create" v-on:click="alert.type='create';alert.show = 'show'">
-      <img src="../assets/icon/createTeam.png">
-      创建一个团队
-    </div>
-  </div>
   <div class="todos" v-if="teamTodo.length">
     <div class="todo" style="background-color:#5d707b" v-for='(todo,index) in teamTodo' v-bind:index='index'>
       <div class="view" v-on:click="showOperation(todo)">
@@ -17,48 +11,21 @@
       </div>
       <div class="operation" v-if="todo.showmore">
         <div class="teamTodo">
-          <span v-on:click="openAlert(todo,'xiugai')"><i class="iconfont icon-xiugai"></i>修改</span>
+          <span v-on:click="openAlert('xiugai',todo)"><i class="iconfont icon-xiugai"></i>修改</span>
           <span v-on:click="finshing(todo)"><i class="iconfont icon-wancheng1"></i>完成</span>
-          <span v-on:click="openAlert(todo,'detail')"><i class="iconfont icon-detail"></i>详细</span>
+          <span v-on:click="openAlert('detail',todo)"><i class="iconfont icon-detail"></i>详细</span>
           <span class="teamName">{{todo.teamInfo.teamName}}</span>
         </div>
       </div>
     </div>
   </div>
-  <div class="alertBG" v-if="alert.show" v-on:click.self="alert.show=false">
-    <div class="alert">
-      <div class="changeSomeThing" v-bind:style="{paddingTop:alert.type === 'create'?'30px':''}" v-if="alert.type === 'create'||alert.type === 'xiugai'">
-        <div class="icon" v-if="alert.type === 'xiugai'">
-          <i class="iconfont icon-xiugai"></i>
-        </div>
-        <div class="input">
-          <input type="text" v-bind:style="{borderColor:alert.alertInput.length?'#000':'#e5e5e5'}" v-focus v-bind:placeholder="alert.type === 'create'?'请输入团队名':'请输入内容'" v-model="alert.alertInput">
-        </div>
-        <div class="button">
-          <div class="cancel" v-on:click="alert.alertInput='';alert.show=false">
-            取消
-          </div>
-          <div class="confirm" v-on:click="alertConfirm()">
-            确认
-          </div>
-        </div>
-      </div>
-      <div class="detail" v-else>
-        <div class="icon">
-          <i class="iconfont icon-detail"></i>
-        </div>
-        <div class="info">
-          <p>团队名字：{{alert.teamInfo.teamName}}</p>
-          <p>发送时间：{{alert.teamInfo.created_at}}</p>
-          <p>截止时间：{{alert.teamInfo.end_time}}</p>
-          <p>团队代号：{{alert.teamInfo.groupcode}}</p>
-        </div>
-        <div class="cancel">
-          <span v-on:click="alert.show=false">返回</span>
-        </div>
-      </div>
+  <div class="createBG" v-if="!createTeams.length&&canShowCreateButton">
+    <div class="create" v-on:click="openAlert('create')">
+      <img src="../assets/icon/createTeam.png">
+      创建一个团队
     </div>
   </div>
+  <router-view></router-view>
 </div>
 </template>
 <script>
@@ -68,24 +35,15 @@ export default {
   data () {
     return {
       teamTodo:[],
-      lastFocus:null,
-      alert:{
-        show:false,
-        alertInput:'',//弹窗的输入内容
-        type:'xiugai',
-        todoObj:null,
-        teamInfo:{
-          teamName:'',
-          created_at:'',
-          end_time:'',
-          groupcode:''
-        }
-      }
+      lastFocus:null
     }
   },
   computed:{
     createTeams(){
       return this.$store.state.createTeams
+    },
+    canShowCreateButton(){
+      return this.$store.state.canShowCreateButton
     },
     joinTeams(){
       return this.$store.state.joinTeams
@@ -104,49 +62,34 @@ export default {
         todo.showmore = true
       }
     },
-    openAlert(todo,type){
-      this.alert.type=type;
-      switch(type){
-        case 'xiugai':
-          this.alert.alertInput=todo.content
-          break
-        case 'detail':
-          this.alert.teamInfo = todo.teamInfo
-          break
-      }
-      this.alert.show=true;
-      this.alert.todoObj=todo
+    openAlert(type,todo={}){
+      this.$router.push({path:'/team/alert',query:{redirect:this.$route.path,type,content:todo.content,teamInfo:todo.teamInfo,id:todo.id}})
     },
     finshing(todo){
       let index = this.teamTodo.indexOf(todo)
       this.teamTodo.splice(index,1);
       this.axios.delete(`/task/${todo.id}`)
     },
-    alertConfirm(){
-      switch(this.alert.type){
-        case 'create'://创建团队
-          if(this.alert.alertInput){
-            this.axios.post('/group',{
-              name:this.alert.alertInput
-            }).then((rep)=>{
-              this.$store.commit({
-                type:'pushCreateTeams',
-                createTeams:[rep.data.data]
-              })
-            })
+    searchTodoObj(id){
+      let arry = this.teamTodo
+      let s = 0
+      let t = arry.length-1
+      let mid = parseInt(t/2)
+      while(s<=t){
+        if(arry[mid].id === parseInt(id)){
+          return arry[mid]
+        }
+        else{
+          if(arry[mid].id<parseInt(id)){
+            s=mid+1;
+            mid = parseInt((s+t)/2)
           }
-          break
-        case 'xiugai'://修改发布的团队todo
-          if(this.alert.alertInput){
-            this.alert.todoObj.content = this.alert.alertInput;
-            this.axios.patch(`/task/${this.alert.todoObj.id}`,{
-              content:this.alert.alertInput
-            })
+          else{
+            t=mid-1;
+            mid = parseInt((s+t)/2)
           }
-          break
+        }
       }
-      this.alert.alertInput='';
-      this.alert.show=false
     },
     initEvent(){
       ebus.$on('pushNewTeamTodo',(data)=>{
@@ -159,6 +102,32 @@ export default {
         }).then((rep)=>{
           Object.assign(data,rep.data.data)
         })
+      })
+      ebus.$on('teamAlertEvent',(data)=>{//alert组件回传数据
+        //先查找需要操作的todoObj
+        switch(data.type){
+          case 'xiugai':
+            if(data.content){
+              let obj = this.searchTodoObj(data.id)
+              obj.content = data.content;
+              this.axios.patch(`/task/${data.id}`,{
+                content:data.content
+              })
+            }
+            break
+          case 'create'://创建团队
+            if(data.content){
+              this.axios.post('/group',{
+                name:data.content
+              }).then((rep)=>{
+                this.$store.commit({
+                  type:'pushCreateTeams',
+                  createTeams:[rep.data.data]
+                })
+              })
+            }
+            break
+        }
       })
     },
     initTaskList(){//获取该用户发布的团队todo
@@ -181,17 +150,10 @@ export default {
   mounted() {
     this.initEvent()
     this.initTaskList()
-  },
-  directives: {
-    focus:{
-      inserted: function (el) {
-        el.focus();
-      }
-    }
   }
 }
 </script>
-<style>
+<style scoped>
 .team{
   position: relative;
   min-height: calc(100vh - 80px - 86px);
@@ -221,78 +183,6 @@ export default {
   transform: translateY(-50%);
   width: 46px;
   height: 24px;
-}
-.team .todos{
-  position: relative;
-  padding-bottom: 150px;
-}
-.team .todos .todo{
-  position: relative;
-  box-shadow: 0 0 6px #ccc;
-  width: 597px;
-  margin: 24px auto;
-  min-height: 106px;
-  border-radius: 10px;
-}
-.team .todos .todo .view{
-  position: relative;
-}
-.team .todos .todo .view .status{
-  position: absolute;
-  left: 0;
-  top: 0;
-  padding: 38px 24px;
-}
-.team .todos .todo .view .status img{
-  width: 33px;
-  height: 30px;
-  display: block;
-}
-.team .todos .todo .view .text{
-  float: left;
-  margin: 33px 20px 33px 81px;
-  line-height: 45px;
-  font-size: 28px;
-  transition: height 0.2s;
-  word-break:break-all;
-}
-.team .todos .todo .view .showlimit{
-  height: 40px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: calc(100% - 115px);
-  overflow: hidden;
-}
-.team .todos .todo .operation{
-  position: relative;
-}
-.team .todos .todo .operation .personalTodo,.teamTodo{
-  position: relative;
-  color: #84caf1;
-  height: 40px;
-  padding: 0 20px 0 81px;
-  line-height: 40px;
-}
-.team .todos .todo .operation span{
-  float: left;
-  font-size: 18px;
-}
-.team .todos .todo .operation span i{
-  padding: 0 11px 0 0;
-  font-size: 18px;
-}
-.team .todos .todo .operation .teamTodo span{
-  margin-right: 32px;
-}
-.team .todos .todo .operation .teamTodo span{
-  margin-right: 66px;
-}
-.team .todos .todo .operation .teamName{
-  float: right;
-  padding: 0 8px;
-  color:#9db6c4;
-  font-size: 18px;
-  margin-right: 0!important;
 }
 .team .alertBG{
   position: fixed;

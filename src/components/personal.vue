@@ -24,7 +24,7 @@
       <div class="operation" v-if="todo.showmore">
         <div class="personalTodo">
           <div class="nofinshed" v-if="!todo.status">
-            <span v-on:click="openAlert(todo,'xiugai')"><i class="iconfont icon-xiugai"></i>修改</span>
+            <span v-on:click="openAlert('xiugai',todo)"><i class="iconfont icon-xiugai"></i>修改</span>
             <span v-on:click="finshing(todo)"><i class="iconfont icon-wancheng1"></i>完成</span>
             <span v-on:click="deleteTodo(todo)"><i class="iconfont icon-icon"></i>删除</span>
           </div>
@@ -50,8 +50,8 @@
         <div class="teamTodo">
           <div class="nofinshed" v-if="!todo.status">
             <span v-on:click="finshing(todo)"><i class="iconfont icon-wancheng1"></i>完成</span>
-            <span v-on:click="openAlert(todo,'danmu')"><i class="iconfont icon-danmu"></i>弹幕</span>
-            <span v-on:click="openAlert(todo,'detail')"><i class="iconfont icon-detail"></i>详细</span>
+            <span v-on:click="openAlert('danmu',todo)"><i class="iconfont icon-danmu"></i>弹幕</span>
+            <span v-on:click="openAlert('detail',todo)"><i class="iconfont icon-detail"></i>详细</span>
             <span class="teamName">{{todo.teamInfo.teamName}}</span>
           </div>
           <div class="finshed" v-else>
@@ -69,41 +69,7 @@
     <p style="color:#000" v-if="complete">Nothing finished!</p>
     <p style="color:#ccc" v-else>Nothing to do!</p>
   </div>
-  <div class="alertBG" v-if="alert.show" v-on:click.self="alert.show=false">
-    <div class="alert">
-      <div class="changeSomeThing" v-if="alert.type === 'danmu'||alert.type === 'xiugai'">
-        <div class="icon">
-          <i class="iconfont icon-danmu" v-if="alert.type === 'danmu'"></i>
-          <i class="iconfont icon-xiugai" v-else></i>
-        </div>
-        <div class="input">
-          <input type="text" v-bind:style="{borderColor:alert.alertInput.length?'#000':'#e5e5e5'}" v-focus v-bind:placeholder="alert.type === 'danmu'?'请输入弹幕':'请输入内容'" v-model="alert.alertInput">
-        </div>
-        <div class="button">
-          <div class="cancel" v-on:click="alert.alertInput='';alert.show=false">
-            取消
-          </div>
-          <div class="confirm" v-on:click="alertConfirm(alert)">
-            确认
-          </div>
-        </div>
-      </div>
-      <div class="detail" v-else>
-        <div class="icon">
-          <i class="iconfont icon-detail"></i>
-        </div>
-        <div class="info">
-          <p>团队名字：{{alert.teamInfo.teamName}}</p>
-          <p>发送时间：{{alert.teamInfo.created_at}}</p>
-          <p>截止时间：{{alert.teamInfo.end_time}}</p>
-          <p>团队代号：{{alert.teamInfo.groupcode}}</p>
-        </div>
-        <div class="cancel">
-          <span v-on:click="alert.show=false">返回</span>
-        </div>
-      </div>
-    </div>
-  </div>
+  <router-view></router-view>
 </div>
 </template>
 <script>
@@ -143,18 +109,6 @@ export default {
       ],
       complete:0,//用于切换完成和未完成
       lastFocus:null,
-      alert:{
-        show:false,
-        alertInput:'',//弹窗的输入内容
-        type:'xiugai',
-        todoObj:null,
-        teamInfo:{
-          teamName:'',
-          created_at:'',
-          end_time:'',
-          groupcode:''
-        }
-      }
     }
   },
   computed:{
@@ -185,21 +139,22 @@ export default {
         todo.showmore = true
       }
     },
-    openAlert(todo,type){
-      this.alert.type=type;
-      switch(type){
-        case 'danmu':
-          this.alert.alertInput=''
-          break
-        case 'xiugai':
-          this.alert.alertInput=todo.content
-          break
-        case 'detail':
-          this.alert.teamInfo = todo.teamInfo
-          break
-      }
-      this.alert.show=true;
-      this.alert.todoObj=todo
+    openAlert(type,todo){
+      this.$router.push({path:'/personal/alert',query:{redirect:this.$route.path,type,content:todo.content,teamInfo:todo.teamInfo,id:todo.id}})
+      // this.alert.type=type;
+      // switch(type){
+      //   case 'danmu':
+      //     this.alert.alertInput=''
+      //     break
+      //   case 'xiugai':
+      //     this.alert.alertInput=todo.content
+      //     break
+      //   case 'detail':
+      //     this.alert.teamInfo = todo.teamInfo
+      //     break
+      // }
+      // this.alert.show=true;
+      // this.alert.todoObj=todo
     },
     finshing(todo){//完成某个事件
       todo.showmore = false
@@ -245,24 +200,32 @@ export default {
         })
       }
     },
-    alertConfirm(alertInfo){//提交弹幕或提交修改
-      switch(alertInfo.type){
-        case 'danmu':
-          if(alertInfo.alertInput){
-            alertInfo.todoObj.danmu.push(alertInfo.alertInput);
-          }
-          break
-        case 'xiugai':
-          if(alertInfo.alertInput){
-            alertInfo.todoObj.content = alertInfo.alertInput;
-            this.axios.patch(`/personal/${alertInfo.todoObj.id}`,{
-              content:alertInfo.alertInput
-            })
-          }
-          break
+    searchTodoObj(type,id){
+      let arry
+      if(type === 'personal'){
+        arry = this.todos
       }
-      this.alert.alertInput='';
-      this.alert.show=false
+      else{//team
+        arry = this.teamTodos
+      }
+      let s = 0
+      let t = arry.length-1
+      let mid = parseInt(t/2)
+      while(s<=t){
+        if(arry[mid].id === parseInt(id)){
+          return arry[mid]
+        }
+        else{
+          if(arry[mid].id<parseInt(id)){
+            s=mid+1;
+            mid = parseInt((s+t)/2)
+          }
+          else{
+            t=mid-1;
+            mid = parseInt((s+t)/2)
+          }
+        }
+      }
     },
     initList(){
       this.axios.get('/personal').then((rep)=>{
@@ -300,18 +263,33 @@ export default {
           Object.assign(data,rep.data.data)
         })
       })
+      ebus.$on('personalAlertEvent',(data)=>{//alert组件回传数据
+        //先查找需要操作的todoObj
+        switch(data.type){
+          case 'danmu':
+            if(data.content){
+              this.axios.post('/barrage',{
+                content:data.content,
+                task_id:data.id
+              })
+            }
+            break
+          case 'xiugai':
+            if(data.content){
+              let obj = this.searchTodoObj('personal',data.id)
+              obj.content = data.content;
+              this.axios.patch(`/personal/${data.id}`,{
+                content:data.content
+              })
+            }
+            break
+        }
+      })
     }
   },
   mounted() {
     this.initEvent()
     this.initList()
-  },
-  directives: {
-    focus:{
-      inserted: function (el) {
-        el.focus();
-      }
-    }
   }
 }
 </script>
@@ -353,78 +331,6 @@ export default {
   line-height: 48px;
   transition: left 0.2s;
 }
-.personal .todos{
-  position: relative;
-  padding-bottom: 150px;
-}
-.personal .todos .todo{
-  position: relative;
-  box-shadow: 0 0 6px #ccc;
-  width: 597px;
-  margin: 24px auto;
-  min-height: 106px;
-  border-radius: 10px;
-}
-.personal .todos .todo .view{
-  position: relative;
-}
-.personal .todos .todo .view .status{
-  position: absolute;
-  left: 0;
-  top: 0;
-  padding: 38px 24px;
-}
-.personal .todos .todo .view .status img{
-  width: 33px;
-  height: 30px;
-  display: block;
-}
-.personal .todos .todo .view .text{
-  float: left;
-  margin: 33px 20px 33px 81px;
-  line-height: 45px;
-  font-size: 28px;
-  transition: height 0.2s;
-  word-break:break-all;
-}
-.personal .todos .todo .view .showlimit{
-  height: 40px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  width: calc(100% - 115px);
-  overflow: hidden;
-}
-.personal .todos .todo .operation{
-  position: relative;
-}
-.personal .todos .todo .operation .personalTodo,.teamTodo{
-  position: relative;
-  color: #84caf1;
-  height: 40px;
-  padding: 0 20px 0 81px;
-  line-height: 40px;
-}
-.personal .todos .todo .operation span{
-  float: left;
-  font-size: 18px;
-}
-.personal .todos .todo .operation span i{
-  padding: 0 11px 0 0;
-  font-size: 18px;
-}
-.personal .todos .todo .operation .nofinshed span{
-  margin-right: 32px;
-}
-.personal .todos .todo .operation .finshed span{
-  margin-right: 66px;
-}
-.personal .todos .todo .operation .teamName{
-  float: right;
-  padding: 0 8px;
-  color:#9db6c4;
-  font-size: 18px;
-  margin-right: 0!important;
-}
 .personal .noTodo{
   position: absolute;
   left: 50%;
@@ -438,97 +344,5 @@ export default {
 }
 .personal .noTodo p{
   font-size: 24px;
-}
-.personal .alertBG{
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0,0,0,0.0.56);
-  z-index: 100;
-}
-.personal .alertBG .alert{
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%,-50%);
-  width: 440px;
-  background-color: #fff;
-  border-radius: 10px;
-}
-.personal .alertBG .alert .changeSomeThing .icon{
-  position: relative;
-  text-align: center;
-  padding: 20px 0;
-}
-.personal .alertBG .alert .changeSomeThing .icon i{
-  font-size: 32px;
-  color: #84caf1;
-}
-.personal .alertBG .alert .changeSomeThing .icon .icon-danmu{
-  font-size: 40px;
-}
-.personal .alertBG .alert .changeSomeThing .input{
-  position: relative;
-  text-align: center;
-}
-.personal .alertBG .alert .changeSomeThing .input input{
-  margin: 0 auto;
-  width: 339px;
-  height: 52px;
-  border: 2px solid;
-  border-radius: 10px;
-  padding: 0 14px;
-  outline: none;
-}
-.personal .alertBG .alert .changeSomeThing .button{
-  position: relative;
-  width: 370px;
-  margin: 0 auto;
-  height: 110px;
-}
-.personal .alertBG .alert .changeSomeThing .button div{
-  width: 160px;
-  height: 52px;
-  text-align: center;
-  line-height:52px;
-  color: #fff;
-  border-radius: 10px;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-}
-.personal .alertBG .alert .changeSomeThing .button .cancel{
-  background-color: #9faeb6;
-  left: 0;
-}
-.personal .alertBG .alert .changeSomeThing .button .confirm{
-  background-color: #1aa6f4;
-  right: 0;
-}
-.personal .alertBG .alert .detail{
-  position: relative;
-}
-.personal .alertBG .alert .detail .icon{
-  position: relative;
-  text-align: center;
-  padding: 20px 0;
-}
-.personal .alertBG .alert .detail .icon i{
-  font-size: 48px;
-  color: #84caf1;
-}
-.personal .alertBG .alert .detail .info p{
-  margin:0 0 22px 40px;
-  font-size: 24px;
-}
-.personal .alertBG .alert .detail .cancel{
-  color: #84caf1;
-  text-align: right;
-  padding: 8px 19px;
-}
-.personal .alertBG .alert .detail .cancel span{
-  padding: 8px 19px;
 }
 </style>

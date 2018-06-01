@@ -56,7 +56,7 @@ export default {
         case 'team':
           return '团队'
         case 'heart':
-          return '监护人'
+          return '监督人'
       }
     },
   },
@@ -187,5 +187,80 @@ footer .select{
 }
 footer p{
   margin:0
+}
+
+/* 这是公共的todo部分 */
+.todos{
+  position: relative;
+  padding-bottom: 150px;
+}
+.todos .todo{
+  position: relative;
+  box-shadow: 0 0 6px #ccc;
+  width: 597px;
+  margin: 24px auto;
+  min-height: 106px;
+  border-radius: 10px;
+}
+.todos .todo .view{
+  position: relative;
+}
+.todos .todo .view .status{
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 38px 24px;
+}
+.todos .todo .view .status img{
+  width: 33px;
+  height: 30px;
+  display: block;
+}
+.todos .todo .view .text{
+  float: left;
+  margin: 33px 20px 33px 81px;
+  line-height: 45px;
+  font-size: 28px;
+  transition: height 0.2s;
+  word-break:break-all;
+}
+.todos .todo .view .showlimit{
+  height: 40px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: calc(100% - 115px);
+  overflow: hidden;
+}
+.todos .todo .operation{
+  position: relative;
+}
+.todos .todo .operation .personalTodo,.teamTodo,.superviseTodo{
+  position: relative;
+  color: #84caf1;
+  height: 40px;
+  padding: 0 20px 0 81px;
+  line-height: 40px;
+}
+.todos .todo .operation span{
+  float: left;
+  font-size: 18px;
+  margin-right: 32px;
+}
+.todos .todo .operation span i{
+  padding: 0 11px 0 0;
+  font-size: 18px;
+}
+.todos .todo .operation .nofinshed span{
+  margin-right: 32px;
+}
+.todos .todo .operation .finshed span{
+  margin-right: 66px;
+}
+.todos .todo .operation .teamName{
+  float: right;
+  padding: 0 8px;
+  color:#9db6c4;
+  font-size: 18px;
+  margin-right: 0!important;
 }
 </style>

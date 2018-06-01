@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import personal from '@/components/personal'
 import team from '@/components/team'
 import heart from '@/components/heart'
+import alert from '@/components/alert'
 
 Vue.use(Router)
 
@@ -15,17 +16,35 @@ export default new Router({
     {
       path: '/personal',
       name: 'personal',
-      component: personal
+      component: personal,
+      children:[
+        {
+          path:'alert',
+          component:alert
+        }
+      ]
     },
     {
       path: '/team',
       name: 'team',
-      component: team
+      component: team,
+      children:[
+        {
+          path:'alert',
+          component:alert
+        }
+      ]
     },
     {
       path: '/heart',
       name: 'heart',
-      component: heart
+      component: heart,
+      children:[
+        {
+          path:'alert',
+          component:alert
+        }
+      ]
     }
   ]
 })
