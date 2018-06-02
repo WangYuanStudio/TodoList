@@ -1,9 +1,9 @@
 <template>
 <div class="supervise">
-  <div class="addSuperviseBg" v-if="!noSupervise">
-    <div class="addSupervise" v-on:click="openAlert">
-      <img src="../assets/icon/createTeam.png">
-      创建一个团队
+  <div class="addSuperviseBg" v-if="noSupervise">
+    <div class="addSupervise" v-on:click="openAlert('addSuperviseBg')">
+      <img src="../assets/icon/createSupervise.png">
+      请求一个监护人
     </div>
   </div>
   <div class="todos" v-if="!noSupervise">
@@ -24,45 +24,17 @@
       </div>
     </div>
   </div>
+  <router-view></router-view>
 </div>
 </template>
 <script>
+import ebus from '../assets/ebus.js'
+import pubjs from '../assets/public.js'
 export default {
   name: 'heart',
   data () {
     return {
-      superviseTodos:[
-        {
-          "id": 2,
-          "content": "I love you!！I love you!！I love you!！I love you!！I love you!！I love you!！I love you!！I love you!！！",
-          "status": 0,
-          "dynamic": 0,
-          "user_id": 2,
-          "created_at": "2018-05-22 17:19:48",
-          "updated_at": "2018-05-22 17:19:48",
-          showmore :false
-        },
-        {
-          "id": 3,
-          "content": "I love you!！",
-          "status": 0,
-          "dynamic": 0,
-          "user_id": 2,
-          "created_at": "2018-05-22 17:19:50",
-          "updated_at": "2018-05-22 17:19:50",
-          showmore :false
-        },
-        {
-          "id": 4,
-          "content": "I love you!",
-          "status": 0,
-          "dynamic": 0,
-          "user_id": 2,
-          "created_at": "2018-05-22 17:19:52",
-          "updated_at": "2018-05-22 17:19:52",
-          showmore :false
-        }
-      ],
+      superviseTodos:[],
       lastFocus:null,
       noSupervise:false,//没有监督人
     }
@@ -80,8 +52,33 @@ export default {
         todo.showmore = true
       }
     },
-    remind(todo){
+    openAlert(type,todo={}){
+      this.$router.push({path:'/heart/alert',query:{redirect:this.$route.path,type,content:todo.content,teamInfo:todo.teamInfo,id:todo.id}})
+    },
+    remind(todo){//催一下
       this.axios.patch(`/supervise/${todo.id}/tourge`)
+    },
+    initEvent(){
+      ebus.$on('heartAlertEvent',(data)=>{//alert组件回传数据
+        //先查找需要操作的todoObj
+        switch(data.type){
+          case 'addSuperviseBg':
+            if(data.content){
+              pubjs.loadingToast()
+              this.axios.post('/supervise',{
+                usercode:data.content
+              }).then((rep)=>{
+                if(rep.data.code === 200){
+                  pubjs.toast('添加成功')
+                }
+                else{
+                  pubjs.alert(rep.data.msg)
+                }
+              })
+            }
+            break
+        }
+      })
     },
     initSuperviseTodos(){
       this.axios.get('/supervise/todolist').then((rep)=>{
@@ -98,11 +95,38 @@ export default {
     }
   },
   mounted() {
-    //this.initSuperviseTodos()
+    this.initSuperviseTodos()
+    this.initEvent()
   }
 }
 </script>
 <style scoped>
+.supervise .addSuperviseBg{
+  width: 100%;
+  height: calc(100vh - 80px - 86px);
+  position: relative;
+}
+.supervise .addSuperviseBg .addSupervise{
+  width: 400px;
+  height: 80px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  background-color: #1aa6f4;
+  color: #fff;
+  border-radius: 10px;
+  line-height: 80px;
+  padding-left: 106px;
+}
+.supervise .addSuperviseBg .addSupervise img{
+  position: absolute;
+  left: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 24px;
+}
 .todos .todo .view .status{
   height: 106px;
   width: 81px;

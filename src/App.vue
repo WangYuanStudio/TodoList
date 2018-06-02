@@ -162,21 +162,21 @@ footer .personal{
   float: left;
   text-align: center;
   margin-left: 68px;
-  padding: 16px 20px;
+  padding: 10px 20px;
 }
 footer .team{
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
-  padding: 15px 20px;
+  padding: 10px 20px;
 }
 footer .heart{
   position: relative;
   float: right;
   text-align: center;
   margin-right: 68px;
-  padding: 16px 20px;
+  padding: 10px 20px;
 }
 footer .icon{
   position: relative;

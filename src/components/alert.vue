@@ -1,10 +1,10 @@
 <template>
   <div class="alertBG">
     <div class="alert">
-      <div class="changeSomeThing" v-if="type === 'danmu'||type === 'xiugai'||type === 'create'">
+      <div class="changeSomeThing" v-if="type === 'danmu'||type === 'xiugai'||type === 'create'||type === 'addSuperviseBg'">
         <div class="icon">
           <i class="iconfont icon-danmu" v-if="type === 'danmu'"></i>
-          <i class="iconfont icon-xiugai" v-else></i>
+          <i class="iconfont icon-xiugai" v-if="type === 'xiugai'"></i>
         </div>
         <div class="input">
           <input type="text" v-bind:style="{borderColor:alertInput.length?'#000':'#e5e5e5'}" v-focus v-bind:placeholder="placeholder" v-model="alertInput">
@@ -75,6 +75,8 @@ export default {
           return '请输入内容'
         case 'create' :
           return '请输入团队名字'
+        case 'addSuperviseBg':
+          return '请输入对方ID'
       }
     }
   },
@@ -90,8 +92,14 @@ export default {
           break
         case 'xiugai':
           reData.content = this.alertInput
+          break
         case 'create':
           reData.content = this.alertInput
+          break
+        case 'addSuperviseBg':
+          reData.content = this.alertInput
+          break
+
       }
       ebus.$emit(`${this.redirect}AlertEvent`,reData)
       this.cancel()
@@ -134,7 +142,7 @@ export default {
 .alertBG .alert{
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 40%;
   transform: translate(-50%,-50%);
   width: 440px;
   background-color: #fff;

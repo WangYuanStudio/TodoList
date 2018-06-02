@@ -1,5 +1,27 @@
 <template>
 <div class="team">
+  <div class="createBG" v-if="!createTeams.length&&canShowCreateButton">
+    <div class="create" v-on:click="openAlert('create')">
+      <img src="../assets/icon/createTeam.png">
+      创建一个团队
+    </div>
+  </div>
+  <div class="newTeamdetailBG" v-if="newTeamDetail.show">
+    <div class="newTeamdetail">
+      <div class="close"><i v-on:click="newTeamDetail.show=false" class="iconfont icon-cha"></i></div>
+      <div class="text">
+        (请扫描二维码或输入团队代码加入团队)
+      </div>
+      <div class="qr">
+        <!-- <img src="" alt=""> -->
+        <i class="weui-loading weui-icon_toast"></i>
+      </div>
+      <div class="teamName">{{newTeamDetail.name}}</div>
+      <div class="teamCode" v-on:click="Clipboard(newTeamDetail.code)">
+        团队代码:{{newTeamDetail.code}}
+      </div>
+    </div>
+  </div>
   <div class="todos" v-if="teamTodo.length">
     <div class="todo" style="background-color:#5d707b" v-for='(todo,index) in teamTodo' v-bind:index='index'>
       <div class="view" v-on:click="showOperation(todo)">
@@ -19,23 +41,24 @@
       </div>
     </div>
   </div>
-  <div class="createBG" v-if="!createTeams.length&&canShowCreateButton">
-    <div class="create" v-on:click="openAlert('create')">
-      <img src="../assets/icon/createTeam.png">
-      创建一个团队
-    </div>
-  </div>
   <router-view></router-view>
 </div>
 </template>
 <script>
+import Clipboard from 'clipboard';
 import ebus from '../assets/ebus.js'
+import pubjs from '../assets/public.js'
 export default {
   name: 'team',
   data () {
     return {
       teamTodo:[],
-      lastFocus:null
+      lastFocus:null,
+      newTeamDetail:{
+        show:false,
+        name:'',
+        code:''
+      }
     }
   },
   computed:{
@@ -91,6 +114,16 @@ export default {
         }
       }
     },
+    Clipboard(content){
+      let div = document.createElement('div')
+      new Clipboard(div ,{
+        text:function(trigger){
+          return content
+        }
+      })
+      div.click()
+      pubjs.toast('复制成功')
+    },
     initEvent(){
       ebus.$on('pushNewTeamTodo',(data)=>{
         data.showmore = false
@@ -124,6 +157,9 @@ export default {
                   type:'pushCreateTeams',
                   createTeams:[rep.data.data]
                 })
+                this.newTeamDetail.name = data.content;
+                this.newTeamDetail.code = rep.data.data.groupcode
+                this.newTeamDetail.show = true
               })
             }
             break
@@ -184,7 +220,7 @@ export default {
   width: 46px;
   height: 24px;
 }
-.team .alertBG{
+.team .newTeamdetailBG{
   position: fixed;
   top: 0;
   left: 0;
@@ -193,87 +229,41 @@ export default {
   background-color: rgba(0,0,0,0.0.56);
   z-index: 100;
 }
-.team .alertBG .alert{
+.team .newTeamdetailBG .newTeamdetail{
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 40%;
   transform: translate(-50%,-50%);
   width: 440px;
   background-color: #fff;
   border-radius: 10px;
-}
-.team .alertBG .alert .changeSomeThing .icon{
-  position: relative;
-  text-align: center;
-  padding: 20px 0;
-}
-.team .alertBG .alert .changeSomeThing .icon i{
-  font-size: 32px;
-  color: #84caf1;
-}
-.team .alertBG .alert .changeSomeThing .icon .icon-danmu{
-  font-size: 40px;
-}
-.team .alertBG .alert .changeSomeThing .input{
-  position: relative;
   text-align: center;
 }
-.team .alertBG .alert .changeSomeThing .input input{
-  margin: 0 auto;
-  width: 339px;
-  height: 52px;
-  border: 2px solid;
-  border-radius: 10px;
-  padding: 0 14px;
-  outline: none;
-}
-.team .alertBG .alert .changeSomeThing .button{
-  position: relative;
-  width: 370px;
-  margin: 0 auto;
-  height: 110px;
-}
-.team .alertBG .alert .changeSomeThing .button div{
-  width: 160px;
-  height: 52px;
-  text-align: center;
-  line-height:52px;
-  color: #fff;
-  border-radius: 10px;
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-}
-.team .alertBG .alert .changeSomeThing .button .cancel{
-  background-color: #9faeb6;
-  left: 0;
-}
-.team .alertBG .alert .changeSomeThing .button .confirm{
-  background-color: #1aa6f4;
-  right: 0;
-}
-.team .alertBG .alert .detail{
-  position: relative;
-}
-.team .alertBG .alert .detail .icon{
-  position: relative;
-  text-align: center;
-  padding: 20px 0;
-}
-.team .alertBG .alert .detail .icon i{
-  font-size: 48px;
-  color: #84caf1;
-}
-.team .alertBG .alert .detail .info p{
-  font-size: 24px;
-  margin:0 0 22px 40px;
-}
-.team .alertBG .alert .detail .cancel{
-  color: #84caf1;
+.team .newTeamdetailBG .newTeamdetail .close{
+  padding: 21px 0;
   text-align: right;
-  padding: 8px 19px;
 }
-.team .alertBG .alert .detail .cancel span{
-  padding: 8px 19px;
+.team .newTeamdetailBG .newTeamdetail .close i{
+  padding: 21px 28px;
+}
+.team .newTeamdetailBG .newTeamdetail .text{
+  color: #a9a6a6;
+  font-size: 16px;
+  padding: 17px 0 20px 0;
+}
+.team .newTeamdetailBG .newTeamdetail .qr img{
+  width: 178px;
+  height: 178px;
+  display: block;
+  margin: 0 auto;
+}
+.team .newTeamdetailBG .newTeamdetail .teamName{
+  font-size: 18px;
+  padding: 30px 0 13px 0;
+}
+.team .newTeamdetailBG .newTeamdetail .teamCode{
+  font-size: 18px;
+  color: #72c7f5;
+  padding: 13px 0 35px 0;
 }
 </style>
