@@ -141,20 +141,6 @@ export default {
     },
     openAlert(type,todo){
       this.$router.push({path:'/personal/alert',query:{redirect:this.$route.path,type,content:todo.content,teamInfo:todo.teamInfo,id:todo.id}})
-      // this.alert.type=type;
-      // switch(type){
-      //   case 'danmu':
-      //     this.alert.alertInput=''
-      //     break
-      //   case 'xiugai':
-      //     this.alert.alertInput=todo.content
-      //     break
-      //   case 'detail':
-      //     this.alert.teamInfo = todo.teamInfo
-      //     break
-      // }
-      // this.alert.show=true;
-      // this.alert.todoObj=todo
     },
     finshing(todo){//完成某个事件
       todo.showmore = false
@@ -201,6 +187,31 @@ export default {
       }
     },
     searchTodoObj(type,id){
+      // let arry
+      // if(type === 'personal'){
+      //   arry = this.todos
+      // }
+      // else{//team
+      //   arry = this.teamTodos
+      // }
+      // let s = 0
+      // let t = arry.length-1
+      // let mid = parseInt(t/2)
+      // while(s<=t){
+      //   if(arry[mid].id === parseInt(id)){
+      //     return arry[mid]
+      //   }
+      //   else{
+      //     if(arry[mid].id<parseInt(id)){
+      //       s=mid+1;
+      //       mid = parseInt((s+t)/2)
+      //     }
+      //     else{
+      //       t=mid-1;
+      //       mid = parseInt((s+t)/2)
+      //     }
+      //   }
+      // }都不是有序序列，折半找个鬼
       let arry
       if(type === 'personal'){
         arry = this.todos
@@ -208,22 +219,9 @@ export default {
       else{//team
         arry = this.teamTodos
       }
-      let s = 0
-      let t = arry.length-1
-      let mid = parseInt(t/2)
-      while(s<=t){
-        if(arry[mid].id === parseInt(id)){
-          return arry[mid]
-        }
-        else{
-          if(arry[mid].id<parseInt(id)){
-            s=mid+1;
-            mid = parseInt((s+t)/2)
-          }
-          else{
-            t=mid-1;
-            mid = parseInt((s+t)/2)
-          }
+      for(let todo of arry){
+        if(todo.id == id){
+          return todo
         }
       }
     },

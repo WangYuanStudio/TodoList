@@ -2,7 +2,7 @@
   <div id="app">
     <header>
       <span>{{title}}</span>
-      <img class="meau" src="data:image/png;base64,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">
+      <img v-on:click="showSideBar" class="meau" src="data:image/png;base64,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">
     </header>
     <main>
       <keep-alive>
@@ -30,20 +30,31 @@
         </div>
       </router-link>
     </footer>
+    <transition name="sideBar">
+        <div class="sideBarBG" v-show="sideBar.show" v-on:click.self="close">
+            <sideBar class="sideBar" v-bind:class="{sideBarAnime:sideBar.animeclass}" v-show="sideBar.show" v-bind:style="{right:sideBar.right}" />
+        </div>
+    </transition>
   </div>
 </template>
 
 <script>
 import addTodo from './components/addtodo'
+import sideBar from './components/sidebar'
 export default {
   name: 'app',
   data(){
     return {
-
+      sideBar:{
+        show:false,
+        right:'',
+        animeclass:false
+      }
     }
   },
   components: {
-    addTodo
+    addTodo,
+    sideBar
   },
   computed:{
     select(){
@@ -59,6 +70,9 @@ export default {
           return '监督人'
       }
     },
+    path(){
+      return this.$route.path
+    }
   },
   methods:{
     async login(){
@@ -71,15 +85,28 @@ export default {
       }
       let data = await this.axios.get(`/login/${code}`)
       if(data.data.code === 200){
-        console.log(data.data.token)
         this.$store.commit({
           type:'updateToken',
-          token:data.data.token,
+          token:data.data.data.token,
         })
       }
       else{
         location.href="http://test.yuanmoc.com/auth"
       }
+    },
+    showSideBar(){
+      this.sideBar.show = true
+      this.sideBar.animeclass = true
+      setTimeout(()=>{
+        this.sideBar.animeclass = false
+      },250)
+      this.$router.push(`${this.$route.path}/sidebar`)
+    },
+    close(){
+      if(this.sideBar.show){
+        this.$router.go(-1)
+      }
+      this.sideBar.show = false
     },
     initCreateTeams(){
       this.axios.get('/group').then((rep)=>{
@@ -96,12 +123,25 @@ export default {
           createTeams:rep.data.data
         })
       })
+    },
+    initRouter(){//首次加载页面不显示侧边栏
+      if(/sidebar/.test(this.$route.path)){
+        this.$router.push(`${this.$route.path.match(/(.*)\/sidebar/)[1]}`)
+      }
     }
   },
   mounted(){
     //this.login()
     this.initJoinTeams()
     this.initCreateTeams()
+    this.initRouter()
+  },
+  watch:{
+    path(newValue,oldValue){
+      if(!/\/sidebar/.test(newValue)&&/\/sidebar/.test(oldValue)){
+        this.sideBar.show = false
+      }
+    },
   }
 
 }
@@ -262,5 +302,36 @@ footer p{
   color:#9db6c4;
   font-size: 18px;
   margin-right: 0!important;
+}
+.sideBarBG{
+  background-color: rgba(0,0,0,0.8);
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  z-index: 110;
+}
+.sideBarBG .sideBar{
+  position: absolute;
+  width: 68.75%;
+  height: 100%;
+  background-color: #fff;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  transition: right 0.2s;
+  right: 0;
+}
+.sideBarAnime{
+  animation: forwards 0.2s ease-in openSideBar;
+}
+@keyframes openSideBar {
+  from{right:-68.75%}
+  to{right:0}
+}
+.sideBar-enter-active, .sideBar-leave-active {
+  transition: opacity .2s;
+}
+.sideBar-enter, .sideBar-leave-to /* .fade-leave-active below version 2.1.8 */ {
+  opacity: 0;
 }
 </style>

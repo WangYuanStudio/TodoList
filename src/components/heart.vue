@@ -72,7 +72,7 @@ export default {
                   pubjs.toast('添加成功')
                 }
                 else{
-                  pubjs.alert(rep.data.msg)
+                  pubjs.alert('出错了',rep.data.msg)
                 }
               })
             }

@@ -61,7 +61,7 @@ var pubjs = {
       document.body.removeChild(toast)
     },2200)
   },
-  alert(text){
+  alert(title,text){
     if(document.getElementById('loadingToast')){
       document.body.removeChild(document.getElementById('loadingToast'))
     }
@@ -70,7 +70,7 @@ var pubjs = {
     alert.innerHTML = `
     <div class="weui-mask"></div>
     <div class="weui-dialog">
-        <div class="weui-dialog__hd"><strong class="weui-dialog__title">弹窗标题</strong></div>
+        <div class="weui-dialog__hd"><strong class="weui-dialog__title">${title}</strong></div>
         <div class="weui-dialog__bd">${text}</div>
         <div class="weui-dialog__ft">
             <a href="javascript:document.body.removeChild(document.getElementById('alert'));" class="weui-dialog__btn weui-dialog__btn_primary">确定</a>

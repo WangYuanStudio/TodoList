@@ -12,7 +12,6 @@ axios.interceptors.request.use(
         if (store.state.token) {  // 判断是否存在token，如果存在的话，则每个http header都加上token
             config.headers.token = store.state.token
         }
-        config.headers.token = '3e20e03a83d564c67f1539586ace6525'
         return config;
     },
     err => {
