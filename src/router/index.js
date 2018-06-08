@@ -4,6 +4,9 @@ import personal from '@/components/personal'
 import team from '@/components/team'
 import heart from '@/components/heart'
 import alert from '@/components/alert'
+import created from '@/components/created'
+import join from '@/components/join'
+import hearted from '@/components/hearted'
 
 Vue.use(Router)
 
@@ -45,6 +48,21 @@ export default new Router({
           component:alert
         }
       ]
+    },
+    {
+      path: '/created',
+      name: 'created',
+      component: created
+    },
+    {
+      path: '/join',
+      name: 'join',
+      component: join
+    },
+    {
+      path: '/hearted',
+      name: 'hearted',
+      component: hearted
     }
   ]
 })

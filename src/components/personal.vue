@@ -283,11 +283,21 @@ export default {
             break
         }
       })
+    },
+    init(){
+      if(this.$store.state.token){
+        this.initEvent()
+        this.initList()
+      }
+      else{
+        setTimeout(()=>{
+          this.init()
+        },1000)
+      }
     }
   },
   mounted() {
-    this.initEvent()
-    this.initList()
+    this.init()
   }
 }
 </script>

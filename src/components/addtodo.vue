@@ -4,10 +4,10 @@
     <div class="addIcon" v-on:click="button = !button">
       <img src="../assets/icon/add.png">
     </div>
-    <div class="personalIcon" v-on:click="button =false;main = true;type = 'personal'" v-bind:style="{top:button?'-90%':'0',pointerEvents:button?'':'none',opacity:button?'1':'0'}">
+    <div class="personalIcon" v-on:click="open('personal')" v-bind:style="{top:button?'-90%':'0',pointerEvents:button?'':'none',opacity:button?'1':'0'}">
       <i class="iconfont icon-personal"></i>
     </div>
-    <div class="teamIcon" v-on:click="button =false;main = true;type = 'team'" v-bind:style="{top:button?'-180%':'0',pointerEvents:button?'':'none',opacity:button?'1':'0'}">
+    <div class="teamIcon" v-on:click="open('team')" v-bind:style="{top:button?'-180%':'0',pointerEvents:button?'':'none',opacity:button?'1':'0'}">
       <i class="iconfont icon-tuandui"></i>
     </div>
   </div>
@@ -40,7 +40,7 @@
         <input type="text" v-bind:style="{borderColor:team.teamInput.length?'#1aa6f4':'#e5e5e5'}" v-focus placeholder="请输入代办事项" v-model="team.teamInput">
       </div>
       <div class="button">
-        <div class="cancel" v-on:click.self="main = false">
+        <div class="cancel" v-on:click.self="close">
           取消
         </div>
         <div class="confirm" v-on:click="pushNewTodo">
@@ -76,9 +76,21 @@ export default {
   computed:{
     teams(){
       return this.$store.state.createTeams
+    },
+    hash(){
+      return this.$route.hash
     }
   },
   methods:{
+    open(type){
+      this.button =false;
+      this.main = true;
+      this.type = type
+      this.$router.push({path:this.$route.path+'#add'})
+    },
+    close(){
+      this.$router.go(-1)
+    },
     pushNewTodo(){
       let msg = {}
       if(this.type === 'personal'){
@@ -87,7 +99,7 @@ export default {
           content:this.personal.personalInput
         }
         ebus.$emit('pushNewPersonalTodo',msg)
-        this.main = false
+        this.close()
       }
       else{
         if(this.teams[this.team.teamIndex]){
@@ -105,7 +117,7 @@ export default {
             }
           }
           ebus.$emit('pushNewTeamTodo',msg)
-          this.main = false
+          this.close()
         }
       }
     }
@@ -118,6 +130,11 @@ export default {
         if(this.teams.length>0){
           this.team.teamIndex = 0
         }
+      }
+    },
+    hash:function(newValue,oldValue){
+      if(oldValue === '#add'&&!newValue){
+        this.main = false
       }
     }
   },

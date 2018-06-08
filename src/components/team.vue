@@ -181,11 +181,21 @@ export default {
           }
         }
       })
+    },
+    init(){
+      if(this.$store.state.token){
+        this.initEvent()
+        this.initTaskList()
+      }
+      else{
+        setTimeout(()=>{
+          this.init()
+        },1000)
+      }
     }
   },
   mounted() {
-    this.initEvent()
-    this.initTaskList()
+    this.init()
   }
 }
 </script>

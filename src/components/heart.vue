@@ -92,11 +92,21 @@ export default {
           this.noSupervise = true
         }
       })
+    },
+    init(){
+      if(this.$store.state.token){
+        this.initSuperviseTodos()
+        this.initEvent()
+      }
+      else{
+        setTimeout(()=>{
+          this.init()
+        },1000)
+      }
     }
   },
   mounted() {
-    this.initSuperviseTodos()
-    this.initEvent()
+    this.init()
   }
 }
 </script>
