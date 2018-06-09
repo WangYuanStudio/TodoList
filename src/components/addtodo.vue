@@ -34,7 +34,8 @@
         </select>
         <div class="weui-cell">
           <div class="weui-cell__bd">
-              <input class="weui-input" type="datetime-local" value="" placeholder="" v-model="team.time" />
+              <input class="weui-input" type="datetime-local" v-model="team.time" />
+              <p class="placeholder" v-if="!team.time">截止时间</p>
           </div>
         </div>
         <input type="text" v-bind:style="{borderColor:team.teamInput.length?'#1aa6f4':'#e5e5e5'}" v-focus placeholder="请输入代办事项" v-model="team.teamInput">
@@ -230,6 +231,17 @@ export default {
 .addTodoBG .addTodoFrom .personalInput,.teamInput{
   position: relative;
   text-align: center;
+}
+.addTodoBG .addTodoFrom .teamInput .weui-cell .weui-cell__bd{
+  position: relative;
+}
+.addTodoBG .addTodoFrom .teamInput .weui-cell .weui-cell__bd .placeholder{
+  position: absolute;
+  color:#888;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 23px;
+  font-size: 22px;
 }
 .addTodoBG .addTodoFrom input{
   margin: 0 auto;

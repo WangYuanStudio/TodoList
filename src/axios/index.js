@@ -20,6 +20,9 @@ axios.interceptors.request.use(
 );
 axios.interceptors.response.use(
     res => {
+      if(res.data.code === 401){
+        location.href=`${axios.defaults.baseURL}/auth`
+      }
       return res
     }
 );

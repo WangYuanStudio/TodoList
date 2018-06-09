@@ -132,8 +132,8 @@ export default {
           content:data.content,
           group_id:data.teamInfo.group_id,
           end_time:data.teamInfo.end_time,
-        }).then((rep)=>{
-          Object.assign(data,rep.data.data)
+        }).then((res)=>{
+          Object.assign(data,res.data.data)
         })
       })
       ebus.$on('teamAlertEvent',(data)=>{//alert组件回传数据
@@ -152,13 +152,13 @@ export default {
             if(data.content){
               this.axios.post('/group',{
                 name:data.content
-              }).then((rep)=>{
+              }).then((res)=>{
                 this.$store.commit({
                   type:'pushCreateTeams',
-                  createTeams:[rep.data.data]
+                  createTeams:[res.data.data]
                 })
                 this.newTeamDetail.name = data.content;
-                this.newTeamDetail.code = rep.data.data.groupcode
+                this.newTeamDetail.code = res.data.data.groupcode
                 this.newTeamDetail.show = true
               })
             }
@@ -167,8 +167,8 @@ export default {
       })
     },
     initTaskList(){//获取该用户发布的团队todo
-      this.axios.get('/task/created').then((rep)=>{
-        for(let team of rep.data.data){
+      this.axios.get('/task/created').then((res)=>{
+        for(let team of res.data.data){
           for(let task of team.task){
             task.showmore = false
             task.teamInfo = {
@@ -183,7 +183,7 @@ export default {
       })
     },
     init(){
-      if(this.$store.state.token){
+      if(this.$store.state.initStart){
         this.initEvent()
         this.initTaskList()
       }

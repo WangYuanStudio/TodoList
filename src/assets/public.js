@@ -30,7 +30,6 @@ var pubjs = {
     loadingToast.id = 'loadingToast'
     loadingToast.style = `opacity: 1;transition:opacity 0.2s`
     loadingToast.innerHTML = `
-      <div class="weui-mask_transparent"></div>
       <div class="weui-toast">
           <i class="weui-loading weui-icon_toast"></i>
           <p class="weui-toast__content">数据加载中</p>
@@ -43,9 +42,9 @@ var pubjs = {
     }
     let toast = document.createElement("div");
     toast.id = 'toast'
-    toast.style = `opacity: 0;transition:opacity 0.2s`
+    toast.style = `pointer-events;opacity: 0;transition:opacity 0.2s`
+    //<div class='weui-mask_transparent'></div>
     toast.innerHTML = `
-        <div class='weui-mask_transparent'></div>
         <div class='weui-toast'>
             <i class='weui-icon-success-no-circle weui-icon_toast'></i>
             <p class='weui-toast__content'>${text}</p>
@@ -77,6 +76,38 @@ var pubjs = {
         </div>
     </div>`
     document.body.appendChild(alert)
+  },
+  confirm(text,accept,cancel){
+    let connfirmBG=  document.createElement("div");
+    connfirmBG.id = 'connfirmBG'
+    connfirmBG.className = 'confirmBG'
+    let connfirm = document.createElement("div");
+    connfirm.className = 'confirm'
+    connfirm.innerHTML = `
+      <div class="text">
+        <p>${text}</p>
+      </div>`
+    let button=document.createElement("div");
+    button.className = 'button'
+    let acceptb = document.createElement("div");
+    acceptb.className = 'accept'
+    acceptb.innerHTML = '确定'
+    acceptb.onclick=accept
+    acceptb.addEventListener('click',function(){
+      document.body.removeChild(document.getElementById('connfirmBG'))
+    })
+    let cancelb = document.createElement("div");
+    cancelb.className = 'cancel'
+    cancelb.innerHTML = '取消'
+    cancelb.onclick=cancel
+    cancelb.addEventListener('click',function(){
+      document.body.removeChild(document.getElementById('connfirmBG'))
+    })
+    button.appendChild(acceptb)
+    button.appendChild(cancelb)
+    connfirm.appendChild(button)
+    connfirmBG.appendChild(connfirm)
+    document.body.appendChild(connfirmBG)
   }
 }
 export default pubjs

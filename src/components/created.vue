@@ -43,12 +43,12 @@ export default {
       this.$router.go(-1)
     },
     getQr(team){
-      this.axios.get(`/qr?content=${team.groupcode}`).then((rep)=>{
+      this.axios.get(`/qr?content=joinTeamsCode:${team.groupcode}`).then((res)=>{
         this.$store.commit({
           type:'setQr',
           obj:team,
           array:'createTeams',
-          qr:rep.data.data.img
+          qr:res.data.data.img
         })
       })
       return ''

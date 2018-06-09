@@ -226,16 +226,16 @@ export default {
       }
     },
     initList(){
-      this.axios.get('/personal').then((rep)=>{
-        for(let item of rep.data.data){
+      this.axios.get('/personal').then((res)=>{
+        for(let item of res.data.data){
           this.todos.push(Object.assign({
             team:false,
             showmore:false
           },item))
         }
       })
-      this.axios.get('/task').then((rep)=>{
-        for(let item of rep.data.data){
+      this.axios.get('/task').then((res)=>{
+        for(let item of res.data.data){
           for(let ttodo of item.task){
             ttodo.team=true
             ttodo.showmore=false
@@ -257,8 +257,8 @@ export default {
         this.todos.push(data)
         this.axios.post('/personal',{
           content:data.content
-        }).then((rep)=>{
-          Object.assign(data,rep.data.data)
+        }).then((res)=>{
+          Object.assign(data,res.data.data)
         })
       })
       ebus.$on('personalAlertEvent',(data)=>{//alert组件回传数据
@@ -285,7 +285,7 @@ export default {
       })
     },
     init(){
-      if(this.$store.state.token){
+      if(this.$store.state.initStart){
         this.initEvent()
         this.initList()
       }

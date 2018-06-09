@@ -15,7 +15,7 @@
           <i v-if="!team.qr" v-bind:getqr="getQr(team)" class="weui-loading weui-icon_toast"></i>
           <img v-else v-bind:src="team.qr">
         </div>
-        <div class="exit">
+        <div class="quit" v-on:click="quit(team)">
           <span>退出</span>
         </div>
       </div>
@@ -36,6 +36,9 @@ export default {
   computed:{
     teams(){
       return this.$store.state.joinTeams
+    },
+    hash(){
+      return this.$route.hash
     }
   },
   methods:{
@@ -43,12 +46,12 @@ export default {
       this.$router.go(-1)
     },
     getQr(team){
-      this.axios.get(`/qr?content=${team.groupcode}`).then((rep)=>{
+      this.axios.get(`/qr?content=${team.groupcode}`).then((res)=>{
         this.$store.commit({
           type:'setQr',
           obj:team,
           array:'joinTeams',
-          qr:rep.data.data.img
+          qr:res.data.data.img
         })
       })
       return ''
@@ -62,6 +65,35 @@ export default {
       })
       div.click()
       pubjs.toast('复制成功')
+    },
+    quit(team){
+      this.$router.push({path:this.$route.path+'#quit'})
+      pubjs.confirm(`你确定要退出"${team.name}"团队么!!!`,()=>{
+        this.axios.delete(`/group/${team.id}/quit`).then((res)=>{
+          if(res.data.code === 200){
+            pubjs.toast('退出成功')
+            this.$store.commit({
+              type:'quitTeam',
+              obj:team
+            })
+          }
+          else{
+            pubjs.alert('出错了',res.data.msg)
+          }
+        })
+        this.$router.go(-1)
+      },()=>{
+        this.$router.go(-1)
+      })
+    },
+  },
+  watch:{
+    hash:function(newValue,oldValue){
+      if(oldValue === '#quit'&&!newValue){
+        if(document.getElementById('connfirmBG')){
+          document.body.removeChild(document.getElementById('connfirmBG'))
+        }
+      }
     }
   },
   mounted(){
@@ -116,12 +148,12 @@ header i{
   width: 118px;
   height: 118px;
 }
-.teamList .team .exit{
+.teamList .team .quit{
   position: absolute;
   top: 142px;
   right: 33px;
 }
-.teamList .team .exit span{
+.teamList .team .quit span{
   display: block;
   font-size: 20px;
   color: #1aa6f4;

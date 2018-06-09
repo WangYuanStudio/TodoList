@@ -35,11 +35,11 @@ export default {
       this.$router.replace({path:'/'+path})
     },
     initUserInfo(){
-      if(this.$store.state.token){
-        this.axios.get('/getInfo').then((rep)=>{
+      if(this.$store.state.initStart){
+        this.axios.get('/getInfo').then((res)=>{
           this.$store.commit({
             type:'updateUserInfo',
-            userInfo:rep.data.data,
+            userInfo:res.data.data,
           })
         })
       }

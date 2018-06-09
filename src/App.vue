@@ -41,6 +41,8 @@
 <script>
 import addTodo from './components/addtodo'
 import sideBar from './components/sidebar'
+import pubjs from './assets/public.js'
+
 export default {
   name: 'app',
   data(){
@@ -78,24 +80,52 @@ export default {
     }
   },
   methods:{
+    getQueryString(name) {
+      let reg = new RegExp("(\\?|&)" + name + "=([^&]*)(&|$)", "i");
+      let r = location.href.match(reg);
+      if (r != null) return unescape(r[2]); return null;
+    },
     async login(){
-      let code
+      if(this.getQueryString('joinTeamsCode')){//通过扫描团队二维码打开
+        //先保存团队code否则授权的时候会丢失参数
+        localStorage.joinTeamsCode = this.getQueryString('joinTeamsCode')
+      }
+      let loginerr=false
       if(!this.$store.state.token){
-        try{
-          code = location.href.match(/(.*?)code=(.*)?/)[2];
-        }
-        catch(e){
-          location.href=`http://test.yuanmoc.com/auth`
-        }
-        let data = await this.axios.get(`/login/${code}`)
-        if(data.data.code === 200){
-          this.$store.commit({
-            type:'updateToken',
-            token:data.data.data.token,
-          })
+        let code = this.getQueryString('code')
+        if(code){
+          let data = await this.axios.get(`/login/${code}`)
+          if(data.data.code === 200){
+            this.$store.commit({
+              type:'updateToken',
+              token:data.data.data.token,
+            })
+          }
+          else{
+            loginerr=true
+            location=`${this.axios.defaults.baseURL}/auth`
+            setTimeout(()=>{
+              this.login()
+            },1000)
+          }
         }
         else{
-          location.href="http://test.yuanmoc.com/auth"
+          loginerr=true
+          location=`${this.axios.defaults.baseURL}/auth`
+          setTimeout(()=>{
+            this.login()
+          },1000)
+        }
+      }
+      if(!loginerr){
+        let joinTeamsCode = localStorage.joinTeamsCode
+        if(joinTeamsCode){
+          this.jointeam(joinTeamsCode)
+        }
+        else{
+          this.$store.commit({//开始初始化各组件
+            type:'initStart'
+          })
         }
       }
 
@@ -114,19 +144,35 @@ export default {
       }
       this.sideBar.show = false
     },
+    jointeam(groupcode){
+      this.axios.post('/group/add',{
+        groupcode:groupcode
+      }).then((res)=>{
+        if(res.data.code === 200){
+          localStorage.joinTeamsCode = ""
+          pubjs.toast('加入团队成功')
+          this.$router.push({
+            path:'/join'
+          })
+          this.$store.commit({//开始初始化各组件
+            type:'initStart'
+          })
+        }
+      })
+    },
     initCreateTeams(){
-      this.axios.get('/group').then((rep)=>{
+      this.axios.get('/group').then((res)=>{
         this.$store.commit({
           type:'pushCreateTeams',
-          createTeams:rep.data.data
+          createTeams:res.data.data
         })
       })
     },
     initJoinTeams(){
-      this.axios.get('/group/add').then((rep)=>{
+      this.axios.get('/group/add').then((res)=>{
         this.$store.commit({
           type:'pushJoinTeams',
-          joinTeams:rep.data.data
+          joinTeams:res.data.data
         })
       })
     },
@@ -136,7 +182,7 @@ export default {
       }
     },
     init(){
-      if(this.$store.state.token){
+      if(this.$store.state.initStart){
         this.initJoinTeams()
         this.initCreateTeams()
         this.initRouter()
@@ -159,7 +205,6 @@ export default {
       }
     },
   }
-
 }
 </script>
 
@@ -351,5 +396,63 @@ footer p{
 }
 .sideBar-enter, .sideBar-leave-to /* .fade-leave-active below version 2.1.8 */ {
   opacity: 0;
+}
+/* 确认框 */
+.confirmBG{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.0.56);
+  z-index: 100;
+}
+.confirmBG .confirm{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  width: 440px;
+  height: 300px;
+  background-color: #fff;
+  border-radius: 10px;
+}
+.confirmBG .confirm .text{
+  position: relative;
+  height: 185px;
+  font-size: 28px;
+  text-align: center;
+}
+.confirmBG .confirm p{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-20%);
+  width: 340px;
+}
+.confirmBG .confirm .button{
+  position: relative;
+  width: 370px;
+  margin: 0 auto;
+  height: 110px;
+}
+.confirmBG .confirm .button div{
+  width: 160px;
+  height: 52px;
+  text-align: center;
+  line-height:52px;
+  color: #fff;
+  border-radius: 10px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.confirmBG .confirm .button .cancel{
+  background-color: #1aa6f4;
+  right: 0;
+}
+.confirmBG .confirm .button .accept{
+  background-color: #9faeb6;
+  left: 0;
 }
 </style>

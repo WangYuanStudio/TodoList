@@ -56,7 +56,11 @@ export default {
       this.$router.push({path:'/heart/alert',query:{redirect:this.$route.path,type,content:todo.content,teamInfo:todo.teamInfo,id:todo.id}})
     },
     remind(todo){//催一下
-      this.axios.patch(`/supervise/${todo.id}/tourge`)
+      this.axios.patch(`/supervise/${todo.id}/tourge`).then((res)=>{
+        if(res.data.code === 200){
+          pubjs.toast('催一下')
+        }
+      })
     },
     initEvent(){
       ebus.$on('heartAlertEvent',(data)=>{//alert组件回传数据
@@ -67,12 +71,12 @@ export default {
               pubjs.loadingToast()
               this.axios.post('/supervise',{
                 usercode:data.content
-              }).then((rep)=>{
-                if(rep.data.code === 200){
-                  pubjs.toast('添加成功')
+              }).then((res)=>{
+                if(res.data.code === 200){
+                  pubjs.toast('申请成功')
                 }
                 else{
-                  pubjs.alert('出错了',rep.data.msg)
+                  pubjs.alert('出错了',res.data.msg)
                 }
               })
             }
@@ -81,9 +85,9 @@ export default {
       })
     },
     initSuperviseTodos(){
-      this.axios.get('/supervise/todolist').then((rep)=>{
-        if(rep.data.code === 200){
-          for(let item of rep.data.data){
+      this.axios.get('/supervise/todolist').then((res)=>{
+        if(res.data.code === 200){
+          for(let item of res.data.data){
             item.showmore = false
             this.superviseTodos.push(item)
           }
@@ -94,7 +98,7 @@ export default {
       })
     },
     init(){
-      if(this.$store.state.token){
+      if(this.$store.state.initStart){
         this.initSuperviseTodos()
         this.initEvent()
       }
