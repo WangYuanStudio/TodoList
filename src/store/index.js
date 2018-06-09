@@ -7,8 +7,8 @@ const store = new Vuex.Store({
   state: {
     token:'',
     //token:localStorage.token,
-    //token:"0fb8db4d26cbc225249b7e92c4273a39",
-    token:'54ee2e1d9f04f8b50e6d889f82c4d4ea',
+    token:"0fb8db4d26cbc225249b7e92c4273a39",
+    //token:'54ee2e1d9f04f8b50e6d889f82c4d4ea',
     createTeams:[],//我创建的团队
     joinTeams:[],//已加入的团队,
     canShowCreateButton:false,//true即表示已获取createTeams
@@ -33,12 +33,21 @@ const store = new Vuex.Store({
     pushJoinTeams(state,playload){
       for(let team in playload.joinTeams){
         playload.joinTeams[team].group.qr=''
+        playload.joinTeams[team].user_group_count=0
         state.joinTeams.push(playload.joinTeams[team].group)
       }
     },
     quitTeam(state,playload){//退出团队
       let index = state.joinTeams.indexOf(playload.obj)
       state.joinTeams.splice(index,1);
+    },
+    delTeam(state,playload){//退出团队
+      for(let i=0;i<state.createTeams.length;i++){
+        if(state.createTeams[i].id == playload.id){
+          state.createTeams.splice(i,1);
+          break
+        }
+      }
     },
     setQr(state,playload){//保存获取的二维码
       let index = state[playload.array].indexOf (playload.obj)

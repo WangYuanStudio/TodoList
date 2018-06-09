@@ -13,8 +13,8 @@
         (请扫描二维码或输入团队代码加入团队)
       </div>
       <div class="qr">
-        <!-- <img src="" alt=""> -->
-        <i class="weui-loading weui-icon_toast"></i>
+        <i v-if="!newTeamDetail.qr" v-bind:getqr="getQr(newTeamDetail.code)" class="weui-loading weui-icon_toast"></i>
+        <img v-else v-bind:src="newTeamDetail.qr">
       </div>
       <div class="teamName">{{newTeamDetail.name}}</div>
       <div class="teamCode" v-on:click="Clipboard(newTeamDetail.code)">
@@ -57,7 +57,8 @@ export default {
       newTeamDetail:{
         show:false,
         name:'',
-        code:''
+        code:'',
+        qr:''
       }
     }
   },
@@ -84,6 +85,12 @@ export default {
         this.lastFocus = todo;
         todo.showmore = true
       }
+    },
+    getQr(groupcode){
+      this.axios.get(`/qr?content=joinTeamsCode:${groupcode}`).then((res)=>{
+        this.newTeamDetail.qr=res.data.data.img
+      })
+      return ''
     },
     openAlert(type,todo={}){
       this.$router.push({path:'/team/alert',query:{redirect:this.$route.path,type,content:todo.content,teamInfo:todo.teamInfo,id:todo.id}})

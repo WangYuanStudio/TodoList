@@ -4,7 +4,7 @@
       <i class="iconfont icon-zhixiang-zuo" v-on:click="goBack"></i>
       <span>已创建团队</span>
     </header>
-    <div class="teamList">
+    <div class="teamList" v-if="!showDetail">
       <div class="team" v-for="(team,index) in teams">
         <div class="info">
           <p><span>团队名：</span>{{team.name}}</p>
@@ -15,7 +15,7 @@
           <i v-if="!team.qr" v-bind:getqr="getQr(team)" class="weui-loading weui-icon_toast"></i>
           <img v-else v-bind:src="team.qr">
         </div>
-        <div class="management">
+        <div class="management" v-on:click="gotoManagement(team)">
           <span>管理</span>
         </div>
       </div>
@@ -36,9 +36,23 @@ export default {
   computed:{
     teams(){
       return this.$store.state.createTeams
+    },
+    showDetail(){
+      return this.$route.path === '/created/teamdetail'
     }
   },
   methods:{
+    gotoManagement(team){
+      this.$router.push({
+        path:'created/teamdetail',
+        query:{
+          name:team.name,
+          groupcode:team.groupcode,
+          id:team.id,
+          index:this.teams.indexOf(team)
+        }
+      })
+    },
     goBack(){
       this.$router.go(-1)
     },
@@ -111,6 +125,10 @@ header i{
   height: 118px;
   text-align: center;
   line-height: 20px;
+}
+.teamList .team .qr i{
+  position: relative;
+  top: -30px;
 }
 .teamList .team .qr img{
   width: 118px;
