@@ -41,7 +41,7 @@
       </div>
     </div>
   </div>
-  <div class="noTodo" v-if="createTeams.length">
+  <div class="noTodo" v-if="createTeams.length&&!teamTodo.length">
     <img src="../assets/icon/logo2.png">
     <p style="color:#ccc">Nothing to do!</p>
   </div>
