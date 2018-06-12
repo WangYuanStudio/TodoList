@@ -1,7 +1,7 @@
 <template>
   <div class="alertBG">
     <div class="alert">
-      <div class="changeSomeThing" v-if="type === 'danmu'||type === 'xiugai'||type === 'create'||type === 'addSuperviseBg'">
+      <div class="changeSomeThing" v-if="type === 'danmu'||type === 'xiugai'||type === 'create'||type === 'addSuperviseBg'||type === 'join'">
         <div class="icon">
           <i class="iconfont icon-danmu" v-if="type === 'danmu'"></i>
           <i class="iconfont icon-xiugai" v-if="type === 'xiugai'"></i>
@@ -77,6 +77,8 @@ export default {
           return '请输入团队名字'
         case 'addSuperviseBg':
           return '请输入对方ID'
+        case 'join':
+          return '请输入要加入的团队ID'
       }
     }
   },
@@ -99,7 +101,9 @@ export default {
         case 'addSuperviseBg':
           reData.content = this.alertInput
           break
-
+        case 'join':
+          reData.content = this.alertInput
+          break
       }
       ebus.$emit(`${this.redirect}AlertEvent`,reData)
       this.cancel()

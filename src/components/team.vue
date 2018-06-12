@@ -41,6 +41,10 @@
       </div>
     </div>
   </div>
+  <div class="noTodo" v-if="createTeams.length">
+    <img src="../assets/icon/logo2.png">
+    <p style="color:#ccc">Nothing to do!</p>
+  </div>
   <router-view></router-view>
 </div>
 </template>
@@ -282,5 +286,19 @@ export default {
   font-size: 18px;
   color: #72c7f5;
   padding: 13px 0 35px 0;
+}
+.noTodo{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  text-align: center;
+}
+.noTodo img{
+  width: 173px;
+  height: 173px;
+}
+.noTodo p{
+  font-size: 24px;
 }
 </style>

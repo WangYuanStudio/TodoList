@@ -24,6 +24,10 @@
       </div>
     </div>
   </div>
+  <div class="noTodo" v-if="!noSupervise&&!superviseTodos.length">
+    <img src="../assets/icon/logo2.png">
+    <p style="color:#ccc">Nothing to do!</p>
+  </div>
   <router-view></router-view>
 </div>
 </template>
@@ -155,5 +159,19 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
+}
+.noTodo{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%,-50%);
+  text-align: center;
+}
+.noTodo img{
+  width: 173px;
+  height: 173px;
+}
+.noTodo p{
+  font-size: 24px;
 }
 </style>

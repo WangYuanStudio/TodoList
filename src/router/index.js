@@ -64,7 +64,13 @@ export default new Router({
     {
       path: '/join',
       name: 'join',
-      component: join
+      component: join,
+      children:[
+        {
+          path:'alert',
+          component:alert
+        }
+      ]
     },
     {
       path: '/hearted',

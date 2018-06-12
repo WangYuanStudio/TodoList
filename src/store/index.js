@@ -26,6 +26,9 @@ const store = new Vuex.Store({
     pushCreateTeams(state,playload){
       for(let team in playload.createTeams){
         playload.createTeams[team].qr=''
+        if(!playload.createTeams[team].user_group_count){
+          playload.createTeams[team].user_group_count=0
+        }
         state.createTeams.push(playload.createTeams[team])
       }
       state.canShowCreateButton=true
@@ -33,7 +36,6 @@ const store = new Vuex.Store({
     pushJoinTeams(state,playload){
       for(let team in playload.joinTeams){
         playload.joinTeams[team].group.qr=''
-        playload.joinTeams[team].user_group_count=0
         state.joinTeams.push(playload.joinTeams[team].group)
       }
     },

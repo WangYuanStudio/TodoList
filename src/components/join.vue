@@ -4,7 +4,7 @@
       <i class="iconfont icon-zhixiang-zuo" v-on:click="goBack"></i>
       <span>已加入团队</span>
     </header>
-    <div class="teamList">
+    <div class="teamList" v-if="teams.length">
       <div class="team" v-for="(team,index) in teams">
         <div class="info">
           <p><span>创建者：</span>{{team.user.nickname}}</p>
@@ -20,12 +20,19 @@
         </div>
       </div>
     </div>
+    <div class="createBG" v-else>
+      <div class="create" v-on:click="openAlert('join')">
+        <img src="../assets/icon/createTeam.png">
+        加入一个团队
+      </div>
+    </div>
     <router-view></router-view>
   </div>
 </template>
 <script>
 import Clipboard from 'clipboard';
 import pubjs from '../assets/public.js'
+import ebus from '../assets/ebus.js'
 export default {
   name: 'created',
   data(){
@@ -42,6 +49,9 @@ export default {
     }
   },
   methods:{
+    openAlert(type){
+      this.$router.push({path:'/join/alert',query:{redirect:this.$route.path,type}})
+    },
     goBack(){
       this.$router.go(-1)
     },
@@ -76,14 +86,34 @@ export default {
               type:'quitTeam',
               obj:team
             })
+            this.$router.go(-1)
           }
           else{
             pubjs.alert('出错了',res.data.msg)
           }
         })
-        this.$router.go(-1)
       },()=>{
         this.$router.go(-1)
+      })
+    },
+    initEvent(){
+      ebus.$on('joinAlertEvent',(data)=>{//alert组件回传数据
+        if(data.content){
+          this.axios.post('/group/add',{
+            groupcode:data.content
+          }).then((res)=>{
+            if(res.data.code === 200){
+              pubjs.toast('加入团队成功')
+              this.$store.commit({//开始初始化各组件
+                type:'pushJoinTeams',
+                joinTeams:[res.data.data]
+              })
+            }
+            else{
+              pubjs.alert(res.data.msg,'')
+            }
+          })
+        }
       })
     },
   },
@@ -97,7 +127,7 @@ export default {
     }
   },
   mounted(){
-
+    this.initEvent()
   }
 }
 </script>
@@ -158,5 +188,31 @@ header i{
   font-size: 20px;
   color: #1aa6f4;
   padding: 10px;
+}
+.createBG{
+  width: 100%;
+  height: calc(100vh - 80px - 86px);
+  position: relative;
+}
+.createBG .create{
+  width: 400px;
+  height: 80px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  background-color: #1aa6f4;
+  color: #fff;
+  border-radius: 10px;
+  line-height: 80px;
+  padding-left: 106px;
+}
+.createBG .create img{
+  position: absolute;
+  left: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 24px;
 }
 </style>
