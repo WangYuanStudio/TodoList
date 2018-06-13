@@ -50,8 +50,10 @@
 </template>
 <script>
 import Clipboard from 'clipboard';
+import QRCode from 'qrcode'
 import ebus from '../assets/ebus.js'
 import pubjs from '../assets/public.js'
+import config from '../assets/config.js'
 export default {
   name: 'team',
   data () {
@@ -91,8 +93,8 @@ export default {
       }
     },
     getQr(groupcode){
-      this.axios.get(`/qr?content=joinTeamsCode:${groupcode}`).then((res)=>{
-        this.newTeamDetail.qr=res.data.data.img
+      QRCode.toDataURL(`${config.URLBASE}/qr?content=${config.URLBASE}?joinTeamsCode=${groupcode}`).then(url=>{
+        this.newTeamDetail.qr=url
       })
       return ''
     },
@@ -174,6 +176,13 @@ export default {
               })
             }
             break
+        }
+      })
+      ebus.$on('delCreateTeam',(data)=>{//删除团队事件
+        for(let index in this.teamTodo){
+          if(data.id === this.teamTodo[index].group_id){
+            this.teamTodo.splice(index,1);
+          }
         }
       })
     },

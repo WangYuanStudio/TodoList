@@ -44,7 +44,10 @@
 </template>
 <script>
 import Clipboard from 'clipboard';
+import QRCode from 'qrcode'
 import pubjs from '../assets/public.js'
+import config from '../assets/config.js'
+
 export default {
   name:'teamdetail',
   data(){
@@ -111,8 +114,11 @@ export default {
       })
     },
     initQr(){
-      this.axios.get(`/qr?content=joinTeamsCode:${this.groupcode}`).then((res)=>{
-          this.qr = res.data.data.img
+      // this.axios.get(`/qr?content=${config.URLBASE}?joinTeamsCode=${this.groupcode}`).then((res)=>{
+      //     this.qr = res.data.data.img
+      // })
+      QRCode.toDataURL(`${config.URLBASE}/qr?content=${config.URLBASE}?joinTeamsCode=${this.groupcode}`).then(url=>{
+        this.qr=url
       })
     },
     init(){

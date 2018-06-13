@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div class="userInfo">
+    <div class="userInfo" v-on:click="Clipboard(userInfo.usercode)">
       <img v-bind:src="userInfo.headimgurl">
-      <span>ID:{{userInfo.nickname}}</span>
+      <span>ID:{{userInfo.usercode}}</span>
     </div>
     <div class="button">
       <div class="created" v-on:click="goto('created')">
@@ -18,6 +18,8 @@
   </div>
 </template>
 <script>
+import Clipboard from 'clipboard';
+import pubjs from '../assets/public.js'
 export default {
   name: 'SideBar',
   data(){
@@ -49,6 +51,16 @@ export default {
         },1000)
       }
     },
+    Clipboard(content){
+      let div = document.createElement('div')
+      new Clipboard(div ,{
+        text:function(trigger){
+          return content
+        }
+      })
+      div.click()
+      pubjs.toast('复制成功')
+    }
   },
   mounted(){
     this.initUserInfo()

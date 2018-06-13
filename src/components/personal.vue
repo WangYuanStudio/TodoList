@@ -255,7 +255,7 @@ export default {
         data.status = 0
         data.danmu=[]
         this.todos.push(data)
-        this.axios.post('/personal',{
+        this.axios.post(`/personal`,{
           content:data.content
         }).then((res)=>{
           Object.assign(data,res.data.data)

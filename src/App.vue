@@ -42,7 +42,7 @@
 import addTodo from './components/addtodo'
 import sideBar from './components/sidebar'
 import pubjs from './assets/public.js'
-
+import config from './assets/config.js'
 export default {
   name: 'app',
   data(){
@@ -143,7 +143,7 @@ export default {
           }
           else{
             loginerr=true
-            location=`${this.axios.defaults.baseURL}/auth`
+            location=`${config.APIBASE}/auth`
             setTimeout(()=>{
               this.login()
             },1000)
@@ -151,7 +151,7 @@ export default {
         }
         else{
           loginerr=true
-          location=`${this.axios.defaults.baseURL}/auth`
+          location=`${config.APIBASE}/auth`
           setTimeout(()=>{
             this.login()
           },1000)
@@ -194,10 +194,10 @@ export default {
           this.$router.push({
             path:'/join'
           })
-          this.$store.commit({//开始初始化各组件
-            type:'initStart'
-          })
         }
+        this.$store.commit({//开始初始化各组件
+          type:'initStart'
+        })
       })
     },
     initCreateTeams(){

@@ -24,8 +24,10 @@
   </div>
 </template>
 <script>
-import Clipboard from 'clipboard';
+import Clipboard from 'clipboard'
+import QRCode from 'qrcode'
 import pubjs from '../assets/public.js'
+import config from '../assets/config.js'
 export default {
   name: 'created',
   data(){
@@ -57,14 +59,17 @@ export default {
       this.$router.go(-1)
     },
     getQr(team){
-      this.axios.get(`/qr?content=joinTeamsCode:${team.groupcode}`).then((res)=>{
+      QRCode.toDataURL(`${config.URLBASE}/qr?content=${config.URLBASE}?joinTeamsCode=${team.groupcode}`).then(url=>{
         this.$store.commit({
           type:'setQr',
           obj:team,
           array:'createTeams',
-          qr:res.data.data.img
+          qr:url
         })
       })
+      // this.axios.get(`/qr?content=${config.URLBASE}?joinTeamsCode=${team.groupcode}`).then((res)=>{
+      //
+      // })
       return ''
     },
     Clipboard(content){
