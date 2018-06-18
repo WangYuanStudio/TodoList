@@ -222,21 +222,18 @@ export default {
       }
     },
     init(){
-      if(this.$store.state.initStart){
-        this.initJoinTeams()
-        this.initCreateTeams()
-        this.initRouter()
-      }
-      else{
-        setTimeout(()=>{
-          this.init()
-        },1000)
-      }
+      this.initJoinTeams()
+      this.initCreateTeams()
+      this.initRouter()
     }
   },
   mounted(){
+    localStorage.build=config.build
     this.login()
-    this.init()
+    if(this.$store.state.initStart){
+      this.init()
+    }
+
   },
   watch:{
     path(newValue,oldValue){
@@ -244,6 +241,11 @@ export default {
         this.sideBar.show = false
       }
     },
+    initStart(newv){
+      if(newv){
+        this.init()
+      }
+    }
   }
 }
 </script>
