@@ -144,17 +144,17 @@ export default {
           else{
             loginerr=true
             location=`${config.APIBASE}/auth`
-            setTimeout(()=>{
-              this.login()
-            },1000)
+            // setTimeout(()=>{
+            //   this.login()
+            // },1000)
           }
         }
         else{
           loginerr=true
           location=`${config.APIBASE}/auth`
-          setTimeout(()=>{
-            this.login()
-          },1000)
+          // setTimeout(()=>{
+          //   this.login()
+          // },1000)
         }
       }
       if(!loginerr){
