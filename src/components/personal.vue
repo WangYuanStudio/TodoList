@@ -124,6 +124,9 @@ export default {
     },
     slideText(){
       return this.complete?'已完成':'未完成'
+    },
+    initStart(){
+      return this.$store.state.initStart
     }
   },
   methods: {
@@ -285,19 +288,16 @@ export default {
       })
     },
     init(){
-      if(this.$store.state.initStart){
-        this.initEvent()
-        this.initList()
-      }
-      else{
-        setTimeout(()=>{
-          this.init()
-        },1000)
-      }
+      this.initEvent()
+      this.initList()
     }
   },
-  mounted() {
-    this.init()
+  watch:{
+    initStart(newv){
+      if(newv){
+        this.init()
+      }
+    }
   }
 }
 </script>

@@ -77,6 +77,9 @@ export default {
     },
     joinTeams(){
       return this.$store.state.joinTeams
+    },
+    initStart(){
+      return this.$store.state.initStart
     }
   },
   methods: {
@@ -203,19 +206,19 @@ export default {
       })
     },
     init(){
-      if(this.$store.state.initStart){
-        this.initEvent()
-        this.initTaskList()
-      }
-      else{
-        setTimeout(()=>{
-          this.init()
-        },1000)
-      }
+      this.initEvent()
+      this.initTaskList()
     }
   },
   mounted() {
-    this.init()
+
+  },
+  watch:{
+    initStart(newv){
+      if(newv){
+        this.init()
+      }
+    }
   }
 }
 </script>

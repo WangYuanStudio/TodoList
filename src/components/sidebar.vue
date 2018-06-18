@@ -30,6 +30,9 @@ export default {
   computed:{
     userInfo(){
       return this.$store.state.userInfo
+    },
+    initStart(){
+      return this.$store.state.initStart
     }
   },
   methods:{
@@ -37,19 +40,12 @@ export default {
       this.$router.replace({path:'/'+path})
     },
     initUserInfo(){
-      if(this.$store.state.initStart){
-        this.axios.get('/getInfo').then((res)=>{
-          this.$store.commit({
-            type:'updateUserInfo',
-            userInfo:res.data.data,
-          })
+      this.axios.get('/getInfo').then((res)=>{
+        this.$store.commit({
+          type:'updateUserInfo',
+          userInfo:res.data.data,
         })
-      }
-      else{
-        setTimeout(()=>{
-          this.initUserInfo()
-        },1000)
-      }
+      })
     },
     Clipboard(content){
       let div = document.createElement('div')
@@ -60,10 +56,20 @@ export default {
       })
       div.click()
       pubjs.toast('复制成功')
+    },
+    init(){
+      this.initUserInfo()
     }
   },
   mounted(){
-    this.initUserInfo()
+
+  },
+  watch:{
+    initStart(newv){
+      if(newv){
+        this.init()
+      }
+    }
   }
 }
 </script>

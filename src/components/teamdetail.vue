@@ -68,6 +68,9 @@ export default {
     },
     id(){
       return this.$route.query.id
+    },
+    initStart(){
+      return this.$store.state.initStart
     }
   },
   methods:{
@@ -122,19 +125,19 @@ export default {
       })
     },
     init(){
-      if(this.$store.state.initStart){
-        this.initMembers()
-        this.initQr()
-      }
-      else{
-        setTimeout(()=>{
-          this.init()
-        },1000)
-      }
+      this.initMembers()
+      this.initQr()
     }
   },
   mounted(){
-    this.init()
+
+  },
+  watch:{
+    initStart(newv){
+      if(newv){
+        this.init()
+      }
+    }
   }
 }
 </script>

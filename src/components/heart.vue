@@ -43,6 +43,11 @@ export default {
       noSupervise:false,//没有监督人
     }
   },
+  computed:{
+    initStart(){
+      return this.$store.state.initStart
+    }
+  },
   methods: {
     showOperation(todo){
       if(todo.showmore){
@@ -102,19 +107,16 @@ export default {
       })
     },
     init(){
-      if(this.$store.state.initStart){
-        this.initSuperviseTodos()
-        this.initEvent()
-      }
-      else{
-        setTimeout(()=>{
-          this.init()
-        },1000)
-      }
+      this.initSuperviseTodos()
+      this.initEvent()
     }
   },
-  mounted() {
-    this.init()
+  watch:{
+    initStart(newv){
+      if(newv){
+        this.init()
+      }
+    }
   }
 }
 </script>

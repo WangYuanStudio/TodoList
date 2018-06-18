@@ -56,6 +56,9 @@ export default {
     },
     hash(){
       return this.$route.hash
+    },
+    initStart(){
+      return this.$store.state.initStart
     }
   },
   methods:{
@@ -100,14 +103,7 @@ export default {
       })
     },
     init(){
-      if(this.$store.state.initStart){
-        this.initSupervise()
-      }
-      else{
-        setTimeout(()=>{
-          this.init()
-        },1000)
-      }
+      this.initSupervise()
     }
   },
   watch:{
@@ -117,10 +113,12 @@ export default {
           document.body.removeChild(document.getElementById('connfirmBG'))
         }
       }
+    },
+    initStart(newv){
+      if(newv){
+        this.init()
+      }
     }
-  },
-  mounted(){
-    this.init()
   }
 }
 </script>
