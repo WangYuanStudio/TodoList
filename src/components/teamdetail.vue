@@ -117,7 +117,7 @@ export default {
       // this.axios.get(`/qr?content=${config.URLBASE}?joinTeamsCode=${this.groupcode}`).then((res)=>{
       //     this.qr = res.data.data.img
       // })
-      QRCode.toDataURL(`${config.URLBASE}/qr?content=${config.URLBASE}?joinTeamsCode=${this.groupcode}`).then(url=>{
+      QRCode.toDataURL(`${config.URLBASE}?joinTeamsCode=${this.groupcode}`).then(url=>{
         this.qr=url
       })
     },

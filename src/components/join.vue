@@ -66,7 +66,7 @@ export default {
       //     qr:res.data.data.img
       //   })
       // })
-      QRCode.toDataURL(`${config.URLBASE}/qr?content=${config.URLBASE}?joinTeamsCode=${team.groupcode}`).then(url=>{
+      QRCode.toDataURL(`${config.URLBASE}?joinTeamsCode=${team.groupcode}`).then(url=>{
         this.$store.commit({
           type:'setQr',
           obj:team,

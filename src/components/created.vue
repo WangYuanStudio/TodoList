@@ -59,7 +59,7 @@ export default {
       this.$router.go(-1)
     },
     getQr(team){
-      QRCode.toDataURL(`${config.URLBASE}/qr?content=${config.URLBASE}?joinTeamsCode=${team.groupcode}`).then(url=>{
+      QRCode.toDataURL(`${config.URLBASE}?joinTeamsCode=${team.groupcode}`).then(url=>{
         this.$store.commit({
           type:'setQr',
           obj:team,

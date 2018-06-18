@@ -7,7 +7,7 @@ const store = new Vuex.Store({
   state: {
     token:'',
     //token:localStorage.token,
-    //token:"b6e285da6cd401e2227e27120b04f245",
+    token:"b6e285da6cd401e2227e27120b04f245",
     //token:'54ee2e1d9f04f8b50e6d889f82c4d4ea',
     createTeams:[],//我创建的团队
     joinTeams:[],//已加入的团队,

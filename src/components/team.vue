@@ -93,7 +93,7 @@ export default {
       }
     },
     getQr(groupcode){
-      QRCode.toDataURL(`${config.URLBASE}/qr?content=${config.URLBASE}?joinTeamsCode=${groupcode}`).then(url=>{
+      QRCode.toDataURL(`${config.URLBASE}?joinTeamsCode=${groupcode}`).then(url=>{
         this.newTeamDetail.qr=url
       })
       return ''
