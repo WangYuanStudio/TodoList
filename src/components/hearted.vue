@@ -106,6 +106,11 @@ export default {
       this.initSupervise()
     }
   },
+  mounted(){
+    if(this.initStart){
+      this.init()
+    }
+  },
   watch:{
     hash:function(newValue,oldValue){
       if(oldValue === '#del'&&!newValue){

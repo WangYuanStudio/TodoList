@@ -74,7 +74,9 @@ export default {
     }
   },
   mounted(){
-
+    if(this.initStart){
+      this.init()
+    }
   },
   watch:{
     initStart(newv){

@@ -298,6 +298,11 @@ export default {
       this.initList()
     }
   },
+  mounted(){
+    if(this.initStart){
+      this.init()
+    }
+  },
   watch:{
     initStart(newv){
       if(newv){

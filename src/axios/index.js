@@ -22,7 +22,9 @@ axios.interceptors.response.use(
     res => {
       if(res.data.code === 401){
         localStorage.token=''
-        location.href=`${axios.defaults.baseURL}/auth`
+        if(store.state.initStart){
+          location.href=`${axios.defaults.baseURL}/auth`
+        }
       }
       else{
         return res

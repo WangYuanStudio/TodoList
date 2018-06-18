@@ -111,6 +111,11 @@ export default {
       this.initEvent()
     }
   },
+  mounted(){
+    if(this.initStart){
+      this.init()
+    }
+  },
   watch:{
     initStart(newv){
       if(newv){
