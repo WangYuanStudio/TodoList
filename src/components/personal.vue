@@ -159,6 +159,9 @@ export default {
           status:1
         })
       }
+      this.$store.commit({
+        type:'finshing',
+      })
     },
     deleteTodo(todo){//删除某件已完成事件
       let index
@@ -188,6 +191,9 @@ export default {
           status:0
         })
       }
+      this.$store.commit({
+        type:'cancelTodo',
+      })
     },
     searchTodoObj(type,id){
       // let arry

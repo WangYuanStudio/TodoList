@@ -15,6 +15,10 @@
         监督人设置
       </div>
     </div>
+    <div class="complete">
+      <p class="sum">{{complete}}</p>
+      <p class="text">七天累计完成</p>
+    </div>
   </div>
 </template>
 <script>
@@ -33,6 +37,14 @@ export default {
     },
     initStart(){
       return this.$store.state.initStart
+    },
+    complete(){
+      if(this.userInfo.completeCount<10){
+        return '0'+this.userInfo.completeCount
+      }
+      else{
+        return this.userInfo.completeCount
+      }
     }
   },
   methods:{
@@ -101,5 +113,25 @@ export default {
 .button div{
   font-size: 28px;
   padding: 30px 52px;
+}
+.complete{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  height: 145px;
+  width: 360px;
+  border-top: 2px solid #022436;
+  padding-top: 32px;
+  text-align: center;
+}
+.complete .sum{
+  color: #1aa6f4;
+  font-size: 40px;
+  margin-bottom: 15px;
+}
+.complete .text{
+  font-size: 24px;
+  color: #022436;
 }
 </style>
