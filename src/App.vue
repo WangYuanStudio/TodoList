@@ -82,6 +82,9 @@ export default {
     },
     path(){
       return this.$route.path
+    },
+    initStart(){
+      return this.$store.state.initStart
     }
   },
   methods:{

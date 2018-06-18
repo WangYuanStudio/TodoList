@@ -20,7 +20,6 @@ const store = new Vuex.Store({
       state.token = payload.token
       localStorage.token = payload.token
       state.initStart=true
-      alert('update token')
     },
     updateUserInfo(state,payload){
       state.userInfo = payload.userInfo
