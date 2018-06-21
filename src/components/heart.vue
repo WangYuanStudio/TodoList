@@ -3,7 +3,7 @@
   <div class="addSuperviseBg" v-if="noSupervise">
     <div class="addSupervise" v-on:click="openAlert('addSuperviseBg')">
       <img src="../assets/icon/createSupervise.png">
-      请求一个监护人
+      请求一个监督人
     </div>
   </div>
   <div class="todos" v-if="!noSupervise">

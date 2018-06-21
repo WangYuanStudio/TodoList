@@ -292,6 +292,24 @@ export default {
             break
         }
       })
+      ebus.$on('updateTask',(groupcode)=>{
+        this.teamTodos=[]
+        this.axios.get('/task').then((res)=>{
+          for(let item of res.data.data){
+            for(let ttodo of item.task){
+              ttodo.team=true
+              ttodo.showmore=false
+              this.teamTodos.push(ttodo)
+              ttodo.teamInfo = {
+                teamName:item.group.name,
+                created_at:ttodo.created_at,
+                end_time:ttodo.end_time,
+                groupcode:item.group.groupcode
+              }
+            }
+          }
+        })
+      })
     },
     init(){
       this.initEvent()

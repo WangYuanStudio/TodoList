@@ -233,10 +233,21 @@ header .TeamdDtailMeau div{
   margin: 0 auto;
 }
 .memberList .member .head{
-  float: left;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
   width: 60px;
   height: 60px;
   border-radius: 50%;
+}
+.memberList .member p{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 92px;
+  line-height: 60px;
+  font-size: 24px;
+  color: #0d1a26;
 }
 .memberList .member .del{
   position: absolute;
@@ -249,13 +260,6 @@ header .TeamdDtailMeau div{
   width: 33px;
   height: 30px;
   display: block;
-}
-.memberList .member p{
-  float: left;
-  margin-left: 32px;
-  line-height: 60px;
-  font-size: 24px;
-  color: #0d1a26;
 }
 .noMember{
   position: absolute;

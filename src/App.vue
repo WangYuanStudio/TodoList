@@ -129,6 +129,7 @@ export default {
       if (r != null) return unescape(r[2]); return null;
     },
     async login(){
+      localStorage.debug=0
       if(this.getQueryString('joinTeamsCode')){//通过扫描团队二维码打开
         //先保存团队code否则授权的时候会丢失参数
         localStorage.joinTeamsCode = this.getQueryString('joinTeamsCode')
@@ -146,18 +147,12 @@ export default {
           }
           else{
             loginerr=true
-            location=`${config.APIBASE}/auth`
-            // setTimeout(()=>{
-            //   this.login()
-            // },1000)
+            location.href=`login.html`
           }
         }
         else{
           loginerr=true
-          location=`${config.APIBASE}/auth`
-          // setTimeout(()=>{
-          //   this.login()
-          // },1000)
+          location.href=`login.html`
         }
       }
       if(!loginerr){
@@ -187,20 +182,19 @@ export default {
       }
       this.sideBar.show = false
     },
-    jointeam(groupcode){
-      this.axios.post('/group/add',{
+    async jointeam(groupcode){
+      let res = await this.axios.post('/group/add',{
         groupcode:groupcode
-      }).then((res)=>{
-        if(res.data.code === 200){
-          localStorage.joinTeamsCode = ""
-          pubjs.toast('加入团队成功')
-          this.$router.push({
-            path:'/join'
-          })
-        }
-        this.$store.commit({//开始初始化各组件
-          type:'initStart'
+      })
+      if(res.data.code === 200){
+        localStorage.joinTeamsCode = ""
+        pubjs.toast('加入团队成功')
+        this.$router.push({
+          path:'/join'
         })
+      }
+      this.$store.commit({//开始初始化各组件
+        type:'initStart'
       })
     },
     initCreateTeams(){
@@ -230,13 +224,11 @@ export default {
       this.initRouter()
     }
   },
-  mounted(){
+  async mounted(){
     localStorage.build=config.build
-    this.login()
-    if(this.$store.state.initStart){
-      this.init()
-    }
-
+    await this.login()
+    this.init()
+    this.$router.push(`/`)
   },
   watch:{
     path(newValue,oldValue){
@@ -244,11 +236,11 @@ export default {
         this.sideBar.show = false
       }
     },
-    initStart(newv){
-      if(newv){
-        this.init()
-      }
-    }
+    // initStart(newv){
+    //   if(newv){
+    //     this.init()
+    //   }
+    // }
   }
 }
 </script>

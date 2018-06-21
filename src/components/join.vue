@@ -36,7 +36,7 @@ import pubjs from '../assets/public.js'
 import ebus from '../assets/ebus.js'
 import config from '../assets/config.js'
 export default {
-  name: 'created',
+  name: 'join',
   data(){
     return {
 
@@ -91,11 +91,12 @@ export default {
       pubjs.confirm(`你确定要退出"${team.name}"团队么!!!`,()=>{
         this.axios.delete(`/group/${team.id}/quit`).then((res)=>{
           if(res.data.code === 200){
-            pubjs.toast('退出成功')
+            ebus.$emit('updateTask')
             this.$store.commit({
               type:'quitTeam',
               obj:team
             })
+            pubjs.toast('退出成功')
             this.$router.go(-1)
           }
           else{
@@ -118,6 +119,7 @@ export default {
                 type:'pushJoinTeams',
                 joinTeams:[res.data.data]
               })
+              ebus.$emit('updateTask')
             }
             else{
               pubjs.alert(res.data.msg,'')
