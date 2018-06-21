@@ -8,7 +8,7 @@
     if(getQueryString('joinTeamsCode')){
       localStorage.joinTeamsCode = getQueryString('joinTeamsCode')
     }
-    if(!localStorage.token){
+    if(localStorage.token){
       location.href="index.html"
     }
     else{
