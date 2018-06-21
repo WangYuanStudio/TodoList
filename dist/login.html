@@ -1,5 +1,13 @@
 <html>
   <script>
+    function getQueryString(name) {
+      let reg = new RegExp("(\\?|&)" + name + "=([^&]*)(&|$)", "i");
+      let r = location.href.match(reg);
+      if (r != null) return unescape(r[2]); return null;
+    }
+    if(getQueryString('joinTeamsCode')){
+      localStorage.joinTeamsCode = getQueryString('joinTeamsCode')
+    }
     if(!localStorage.token){
       location.href="index.html"
     }
