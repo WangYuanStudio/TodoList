@@ -113,6 +113,14 @@ export default {
       this.axios.get(`/group/${this.id}/number`).then((res)=>{
         if(res.data.code === 200){
           this.members = res.data.data
+          this.$store.commit({
+            type:'updateTeamInfo',
+            id:this.id,
+            name:'createTeams',
+            data:{
+              user_group_count:res.data.data.length
+            }
+          })
         }
       })
     },

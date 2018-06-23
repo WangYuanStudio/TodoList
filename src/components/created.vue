@@ -20,6 +20,12 @@
         </div>
       </div>
     </div>
+    <div class="createBG" v-if="!teams.length">
+      <div class="create" v-on:click="openAlert('create')">
+        <img src="../assets/icon/createTeam.png">
+        创建一个团队
+      </div>
+    </div>
     <router-view></router-view>
   </div>
 </template>
@@ -54,6 +60,10 @@ export default {
           index:this.teams.indexOf(team)
         }
       })
+    },
+    openAlert(type,todo={}){
+      this.$router.push({path:'/team'})
+      this.$router.push({path:'/team/alert',query:{redirect:'/team',type,content:todo.content,teamInfo:todo.teamInfo,id:todo.id}})
     },
     goBack(){
       this.$router.go(-1)
@@ -93,6 +103,32 @@ header i{
   position: absolute;
   left: 23px;
   font-size: 60px;
+}
+.createBG{
+  width: 100%;
+  height: calc(100vh - 80px - 86px);
+  position: relative;
+}
+.createBG .create{
+  width: 400px;
+  height: 80px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  background-color: #1aa6f4;
+  color: #fff;
+  border-radius: 10px;
+  line-height: 80px;
+  padding-left: 106px;
+}
+.createBG .create img{
+  position: absolute;
+  left: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 46px;
+  height: 24px;
 }
 .teamList{
   padding: 32px 0 0 0;

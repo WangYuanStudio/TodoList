@@ -6,8 +6,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     token:localStorage.debug==='1'?'':localStorage.token,
-    //token:"b6e285da6cd401e2227e27120b04f245",
-    //token:'54ee2e1d9f04f8b50e6d889f82c4d4ea',
+    token:"b6e285da6cd401e2227e27120b04f245",
     createTeams:[],//我创建的团队
     joinTeams:[],//已加入的团队,
     canShowCreateButton:false,//true即表示已获取createTeams
@@ -22,6 +21,16 @@ const store = new Vuex.Store({
     },
     updateUserInfo(state,payload){
       state.userInfo = payload.userInfo
+    },
+    updateTeamInfo(state,playload){
+      for(let team of state[playload.name]){
+        if(team.id = playload.id){
+          for(let key in playload.data){
+            team[key] = playload.data[key]
+          }
+          break
+        }
+      }
     },
     pushCreateTeams(state,playload){
       for(let team in playload.createTeams){

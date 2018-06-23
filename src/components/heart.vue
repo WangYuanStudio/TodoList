@@ -92,6 +92,9 @@ export default {
             break
         }
       })
+      ebus.$on('delHeart',()=>{
+        this.noSupervise=true
+      })
     },
     initSuperviseTodos(){
       this.axios.get('/supervise/todolist').then((res)=>{

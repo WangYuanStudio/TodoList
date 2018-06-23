@@ -130,10 +130,10 @@ export default {
     },
     async login(){
       localStorage.debug=0
-      if(this.getQueryString('joinTeamsCode')){//通过扫描团队二维码打开
-        //先保存团队code否则授权的时候会丢失参数
-        localStorage.joinTeamsCode = this.getQueryString('joinTeamsCode')
-      }
+      // if(this.getQueryString('joinTeamsCode')){//通过扫描团队二维码打开
+      //   //先保存团队code否则授权的时候会丢失参数
+      //   localStorage.joinTeamsCode = this.getQueryString('joinTeamsCode')
+      // }
       let loginerr=false
       if(!this.$store.state.token){
         let code = this.getQueryString('code')
@@ -166,7 +166,22 @@ export default {
           })
         }
       }
-
+    },
+    jointeam(groupcode){
+      this.axios.post('/group/add',{
+        groupcode:groupcode
+      }).then(res=>{
+        if(res.data.code === 200){
+          localStorage.joinTeamsCode = ""
+          pubjs.toast('加入团队成功')
+          this.$router.push({
+            path:'/join'
+          })
+        }
+        this.$store.commit({//开始初始化各组件
+          type:'initStart'
+        })
+      })
     },
     showSideBar(){
       this.sideBar.show = true
@@ -181,21 +196,6 @@ export default {
         this.$router.go(-1)
       }
       this.sideBar.show = false
-    },
-    async jointeam(groupcode){
-      let res = await this.axios.post('/group/add',{
-        groupcode:groupcode
-      })
-      if(res.data.code === 200){
-        localStorage.joinTeamsCode = ""
-        pubjs.toast('加入团队成功')
-        this.$router.push({
-          path:'/join'
-        })
-      }
-      this.$store.commit({//开始初始化各组件
-        type:'initStart'
-      })
     },
     initCreateTeams(){
       this.axios.get('/group').then((res)=>{
@@ -228,7 +228,7 @@ export default {
     localStorage.build=config.build
     await this.login()
     this.init()
-    this.$router.push(`/`)
+    this.$router.replace(`/`)
   },
   watch:{
     path(newValue,oldValue){

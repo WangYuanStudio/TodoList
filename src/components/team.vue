@@ -80,6 +80,9 @@ export default {
     },
     initStart(){
       return this.$store.state.initStart
+    },
+    path(){
+      return this.$route.path
     }
   },
   methods: {
@@ -219,6 +222,11 @@ export default {
     initStart(newv){
       if(newv){
         this.init()
+      }
+    },
+    path(newv){
+      if(newv !== '/team'){
+        this.newTeamDetail.show=false
       }
     }
   }

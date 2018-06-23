@@ -87,8 +87,9 @@ export default {
               user:{}
             }
           }
+          ebus.$emit('delHeart')
+          this.$router.go(-1)
         })
-        this.$router.go(-1)
       },()=>{
         this.$router.go(-1)
       })
