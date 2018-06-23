@@ -6,7 +6,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     token:localStorage.debug==='1'?'':localStorage.token,
-    token:"b6e285da6cd401e2227e27120b04f245",
+    //token:"b6e285da6cd401e2227e27120b04f245",
     createTeams:[],//我创建的团队
     joinTeams:[],//已加入的团队,
     canShowCreateButton:false,//true即表示已获取createTeams
