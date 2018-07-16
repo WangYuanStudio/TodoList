@@ -50,7 +50,7 @@
         <div class="teamTodo">
           <div class="nofinshed" v-if="!todo.status">
             <span v-on:click="finshing(todo)"><i class="iconfont icon-wancheng1"></i>完成</span>
-            <span v-on:click="openAlert('danmu',todo)"><i class="iconfont icon-danmu"></i>弹幕</span>
+            <!-- <span v-on:click="openAlert('danmu',todo)"><i class="iconfont icon-danmu"></i>弹幕</span> -->
             <span v-on:click="openAlert('detail',todo)"><i class="iconfont icon-detail"></i>详细</span>
             <span class="teamName">{{todo.teamInfo.teamName}}</span>
           </div>
@@ -131,6 +131,7 @@ export default {
   },
   methods: {
     showOperation(todo){
+      console.log(todo)
       if(todo.showmore){
         todo.showmore = false
       }

@@ -1,6 +1,6 @@
 const config={
-  URLBASE:"http://temp.yuanmoc.com/dist/login.html",
-  APIBASE:"http://test.yuanmoc.com",
-  build:"06231412"
+  URLBASE:"https://wx-app.wangyuan.info/todolist/login.html",
+  APIBASE:"https://wx-app.wangyuan.info/todolist/api/public/index.php",
+  build:"07161330"
 }
 export default config
