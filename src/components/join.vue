@@ -3,6 +3,7 @@
     <header>
       <i class="iconfont icon-zhixiang-zuo" v-on:click="goBack"></i>
       <span>已加入团队</span>
+      <i class="iconfont icon-add" v-if="teams.length" v-on:click="openAlert('join')"></i>
     </header>
     <div class="teamList" v-if="teams.length">
       <div class="team" v-for="(team,index) in teams">
@@ -146,8 +147,14 @@ export default {
 <style scoped>
 header i{
   position: absolute;
+}
+header .icon-zhixiang-zuo{
   left: 23px;
   font-size: 60px;
+}
+header .icon-add{
+  right: 23px;
+  font-size: 40px;
 }
 .teamList{
   padding: 32px 0 0 0;

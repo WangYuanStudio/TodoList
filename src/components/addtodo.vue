@@ -7,7 +7,7 @@
     <div class="personalIcon" v-on:click="open('personal')" v-bind:style="{top:button?'-90%':'0',pointerEvents:button?'':'none',opacity:button?'1':'0'}">
       <i class="iconfont icon-personal"></i>
     </div>
-    <div class="teamIcon" v-on:click="open('team')" v-bind:style="{top:button?'-180%':'0',pointerEvents:button?'':'none',opacity:button?'1':'0'}">
+    <div class="teamIcon" v-if="teams.length" v-on:click="open('team')" v-bind:style="{top:button?'-180%':'0',pointerEvents:button?'':'none',opacity:button?'1':'0'}">
       <i class="iconfont icon-tuandui"></i>
     </div>
   </div>
@@ -19,7 +19,7 @@
           <img src="../assets/icon/select.png" v-else>
           <span>个人</span>
         </div>
-        <div class="teamType" v-on:click="type = 'team'">
+        <div class="teamType" v-if="teams.length" v-on:click="type = 'team'">
           <img src="../assets/icon/selected.png" v-if="type === 'team'">
           <img src="../assets/icon/select.png" v-else>
           <span>团队</span>

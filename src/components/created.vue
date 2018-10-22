@@ -3,6 +3,7 @@
     <header>
       <i class="iconfont icon-zhixiang-zuo" v-on:click="goBack"></i>
       <span>已创建团队</span>
+      <i class="iconfont icon-add" v-if="teams.length" v-on:click="openAlert('create')"></i>
     </header>
     <div class="teamList" v-if="!showDetail">
       <div class="team" v-for="(team,index) in teams">
@@ -101,8 +102,14 @@ export default {
 <style scoped>
 header i{
   position: absolute;
+}
+header .icon-zhixiang-zuo{
   left: 23px;
   font-size: 60px;
+}
+header .icon-add{
+  right: 23px;
+  font-size: 40px;
 }
 .createBG{
   width: 100%;
