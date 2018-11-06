@@ -10,32 +10,6 @@
     </div>
   </div>
   <div class="todos">
-    <div class="todo" style="background-color:#fff" v-for='(todo,index) in todoFilter' v-bind:index='index'>
-      <div class="view" v-on:click="showOperation(todo)">
-        <div class="status" v-if="todo.status" v-on:click.stop="cancelTodo(todo)">
-          <img src="../assets/icon/ok.png" alt="">
-        </div>
-        <div class="status" v-else v-on:click.stop="finshing(todo)">
-          <img src="../assets/icon/no.png" alt="">
-        </div>
-        <!-- <div class="text" v-bind:class="{showlimit:!todo.showmore}" v-bind:style="{color:todo.team?'#fff':'#000'}">{{todo.content}}</div> -->
-        <div class="text" v-bind:style="{color:todo.team?'#fff':'#000'}">{{todo.content}}</div>
-        <div style="clear:both"></div>
-      </div>
-      <div class="operation" v-if="todo.showmore">
-        <div class="personalTodo">
-          <div class="nofinshed" v-if="!todo.status">
-            <span v-on:click="openAlert('xiugai',todo)"><i class="iconfont icon-xiugai"></i>修改</span>
-            <span v-on:click="finshing(todo)"><i class="iconfont icon-wancheng1"></i>完成</span>
-            <span v-on:click="deleteTodo(todo)"><i class="iconfont icon-icon"></i>删除</span>
-          </div>
-          <div class="finshed" v-else>
-            <span v-on:click="deleteTodo(todo)"><i class="iconfont icon-icon"></i>删除</span>
-            <span v-on:click="cancelTodo(todo)"><i class="iconfont icon-wuuiconsuoxiao"></i>取消</span>
-          </div>
-        </div>
-      </div>
-    </div>
     <div class="todo" style="background-color:#5d707b" v-for='(todo,index) in teamTodoFilter' v-bind:index='index'>
       <div class="view" v-on:click="showOperation(todo)">
         <div class="status" v-if="todo.status" v-on:click.stop="cancelTodo(todo)">
@@ -60,6 +34,32 @@
             <span v-on:click="deleteTodo(todo)"><i class="iconfont icon-icon"></i>删除</span>
             <span v-on:click="cancelTodo(todo)"><i class="iconfont icon-wuuiconsuoxiao"></i>取消</span>
             <span class="teamName">{{todo.teamInfo.teamName}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="todo" style="background-color:#fff" v-for='(todo,index) in todoFilter' v-bind:index='index'>
+      <div class="view" v-on:click="showOperation(todo)">
+        <div class="status" v-if="todo.status" v-on:click.stop="cancelTodo(todo)">
+          <img src="../assets/icon/ok.png" alt="">
+        </div>
+        <div class="status" v-else v-on:click.stop="finshing(todo)">
+          <img src="../assets/icon/no.png" alt="">
+        </div>
+        <!-- <div class="text" v-bind:class="{showlimit:!todo.showmore}" v-bind:style="{color:todo.team?'#fff':'#000'}">{{todo.content}}</div> -->
+        <div class="text" v-bind:style="{color:todo.team?'#fff':'#000'}">{{todo.content}}</div>
+        <div style="clear:both"></div>
+      </div>
+      <div class="operation" v-if="todo.showmore">
+        <div class="personalTodo">
+          <div class="nofinshed" v-if="!todo.status">
+            <span v-on:click="openAlert('xiugai',todo)"><i class="iconfont icon-xiugai"></i>修改</span>
+            <span v-on:click="finshing(todo)"><i class="iconfont icon-wancheng1"></i>完成</span>
+            <span v-on:click="deleteTodo(todo)"><i class="iconfont icon-icon"></i>删除</span>
+          </div>
+          <div class="finshed" v-else>
+            <span v-on:click="deleteTodo(todo)"><i class="iconfont icon-icon"></i>删除</span>
+            <span v-on:click="cancelTodo(todo)"><i class="iconfont icon-wuuiconsuoxiao"></i>取消</span>
           </div>
         </div>
       </div>
