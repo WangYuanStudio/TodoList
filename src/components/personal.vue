@@ -18,7 +18,8 @@
         <div class="status" v-else v-on:click.stop="finshing(todo)">
           <img src="../assets/icon/no.png" alt="">
         </div>
-        <div class="text" v-bind:class="{showlimit:!todo.showmore}" v-bind:style="{color:todo.team?'#fff':'#000'}">{{todo.content}}</div>
+        <!-- <div class="text" v-bind:class="{showlimit:!todo.showmore}" v-bind:style="{color:todo.team?'#fff':'#000'}">{{todo.content}}</div> -->
+        <div class="text" v-bind:style="{color:todo.team?'#fff':'#000'}">{{todo.content}}</div>
         <div style="clear:both"></div>
       </div>
       <div class="operation" v-if="todo.showmore">
@@ -43,7 +44,8 @@
         <div class="status" v-else v-on:click.stop="finshing(todo)">
           <img src="../assets/icon/no.png" alt="">
         </div>
-        <div class="text" v-bind:class="{showlimit:!todo.showmore}" style="color:#fff">{{todo.content}}</div>
+        <!-- <div class="text" v-bind:class="{showlimit:!todo.showmore}" style="color:#fff">{{todo.content}}</div> -->
+        <div class="text" style="color:#fff">{{todo.content}}</div>
         <div style="clear:both"></div>
       </div>
       <div class="operation" v-if="todo.showmore">
@@ -131,7 +133,7 @@ export default {
   },
   methods: {
     showOperation(todo){
-      console.log(todo)
+      // console.log(todo)
       if(todo.showmore){
         todo.showmore = false
       }
