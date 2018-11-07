@@ -133,7 +133,6 @@ export default {
   },
   methods: {
     showOperation(todo){
-      // console.log(todo)
       if(todo.showmore){
         todo.showmore = false
       }
@@ -265,6 +264,7 @@ export default {
     initEvent(){
       ebus.$on('pushNewPersonalTodo',(data)=>{
         data.status = 0
+        data.showmore = false
         data.danmu=[]
         this.todos.push(data)
         this.axios.post(`/personal`,{

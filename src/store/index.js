@@ -6,7 +6,7 @@ Vue.use(Vuex)
 const store = new Vuex.Store({
   state: {
     //token:localStorage.debug==='1'?'':localStorage.token,
-    token:localStorage.token,
+    token:process.env.NODE_ENV === 'development'?'ace9acea5b5466248aff52beb86c555f':localStorage.token,
     // token: 'ace9acea5b5466248aff52beb86c555f',
     createTeams:[],//我创建的团队
     joinTeams:[],//已加入的团队,
